@@ -1572,8 +1572,8 @@ addEventListener('pointermove',function(e){P.tx=e.clientX;P.ty=e.clientY;},{pass
 if(!touch){qsa('a,.btn').forEach(function(el){el.addEventListener('mouseenter',function(){curr.classList.add('big');});el.addEventListener('mouseleave',function(){curr.classList.remove('big');});});}
 
 var DATA=JSON.parse(document.getElementById('pts').textContent);
-var rawN=DATA.n|0,mem=navigator.deviceMemory||8,cap=touch?640:2700;
-if(mem<=4){cap=touch?520:1600;}
+var rawN=DATA.n|0,mem=navigator.deviceMemory||8,cap=touch?2000:2700;
+if(mem<=4){cap=touch?1200:1600;}
 var N=Math.min(rawN,cap),SH=DATA.shapes;
 var fxLayers=!reduceMotion;
 var seed=new Float32Array(N);for(var i=0;i<N;i++){seed[i]=Math.random();}
@@ -1639,7 +1639,7 @@ function buildLines(){
 function init3D(){
  var w=innerWidth,h=innerHeight;
  renderer=new THREE.WebGLRenderer({canvas:qs('#gl'),antialias:true,alpha:true,powerPreference:'high-performance'});
- renderer.setPixelRatio(Math.min(touch?0.85:0.85,devicePixelRatio||1));renderer.setSize(w,h);renderer.setClearColor(0x000000,0);
+ renderer.setPixelRatio(Math.min(touch?2:0.85,devicePixelRatio||1));renderer.setSize(w,h);renderer.setClearColor(0x000000,0);
  scene=new THREE.Scene();
  camera=new THREE.PerspectiveCamera(55,w/h,.1,100);camera.position.set(0,0,4.7);
  group=new THREE.Group();scene.add(group);
@@ -1651,7 +1651,7 @@ function init3D(){
  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
  posAttr=geo.getAttribute('position');colAttr=geo.getAttribute('color');
  var tex=softTex();
-var mat=new THREE.PointsMaterial({size:touch?0.09:0.05,map:tex,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true});
+var mat=new THREE.PointsMaterial({size:touch?0.06:0.05,map:tex,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true});
 points=new THREE.Points(geo,mat);group.add(points);
  if(fxLayers){var hoverGeo=new THREE.BufferGeometry(),hoverCol=new Float32Array(N*3);
  hoverGeo.setAttribute('position',posAttr);
