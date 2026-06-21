@@ -1601,7 +1601,7 @@ var CH=[
  {shape:'paw',a:0x9a7bff,b:0xff7a3f,halo:0x9a7bff,acc:'#b09aff',bg:5}
 ];
 var bgs=qsa('.bg');
-var VIEW=[{sc:1.02,px:0.68,py:0.03,cz:4.55},{sc:1.02,px:0.68,py:0.03,cz:4.55},{sc:0.82,px:-0.62,py:-0.03,cz:5.25},{sc:1.06,px:0.56,py:0.02,cz:4.35},{sc:1.78,px:0.06,py:-0.03,cz:6.15},{sc:0.9,px:0.14,py:-0.02,cz:5.05},{sc:1.02,px:0.62,py:0.04,cz:4.95}];
+var VIEW=[{sc:1.02,px:0.68,py:0.03,cz:4.55},{sc:1.02,px:0.50,py:0.03,cz:4.55},{sc:0.82,px:-0.62,py:-0.03,cz:5.25},{sc:1.06,px:0.56,py:0.02,cz:4.35},{sc:1.78,px:0.06,py:-0.03,cz:6.15},{sc:0.9,px:0.14,py:-0.02,cz:5.05},{sc:1.02,px:0.62,py:0.04,cz:4.95}];
 function setBg(i){bgs.forEach(function(el,k){el.classList.toggle('on',k===i);});}
 var railLinks=qsa('.chapter-rail a'),railProgress=qs('#chapterProgress');
 function updateRail(i,p){if(railProgress){railProgress.style.transform='scaleY('+Math.max(0,Math.min(1,p||0))+')';}railLinks.forEach(function(a,k){var on=k===i;a.classList.toggle('active',on);if(on){a.setAttribute('aria-current','true');}else{a.removeAttribute('aria-current');}});}
@@ -1654,7 +1654,7 @@ function init3D(){
  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
  posAttr=geo.getAttribute('position');colAttr=geo.getAttribute('color');
  var tex=softTex();
-var mat=new THREE.PointsMaterial({size:touch?0.12:0.05,map:tex,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true});if(isIOS){mat.blending=THREE.CustomBlending;mat.blendEquation=THREE.AddEquation;mat.blendSrc=THREE.SrcAlphaFactor;mat.blendDst=THREE.OneFactor;mat.blendEquationAlpha=THREE.AddEquation;mat.blendSrcAlpha=THREE.OneFactor;mat.blendDstAlpha=THREE.OneFactor;}
+var mat=new THREE.PointsMaterial({size:touch?0.08:0.05,map:tex,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true});if(isIOS){mat.blending=THREE.CustomBlending;mat.blendEquation=THREE.AddEquation;mat.blendSrc=THREE.SrcAlphaFactor;mat.blendDst=THREE.OneFactor;mat.blendEquationAlpha=THREE.AddEquation;mat.blendSrcAlpha=THREE.OneFactor;mat.blendDstAlpha=THREE.OneFactor;}
 points=new THREE.Points(geo,mat);group.add(points);
  if(fxLayers){var hoverGeo=new THREE.BufferGeometry(),hoverCol=new Float32Array(N*3);
  hoverGeo.setAttribute('position',posAttr);
