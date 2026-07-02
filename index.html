@@ -1228,6 +1228,49 @@ body{background:#05040a}
   #id .taglab .idtag-flip{top:14px;right:14px;width:26px;height:26px}
 }
 </style>
+<style id="bioStyles">
+@property --p{syntax:'<number>';inherits:false;initial-value:0}
+#scan .inner{grid-template-columns:minmax(300px,1fr) minmax(340px,.95fr);--field-x:78%}
+#scan .bio-copy{grid-column:1}#scan .scanner{grid-column:2;justify-self:end}
+@media(max-width:900px){#scan .inner{grid-template-columns:1fr}#scan .bio-copy,#scan .scanner{grid-column:1}#scan .scanner{justify-self:stretch}}
+.scanner{position:relative;border:1px solid rgba(243,236,221,.16);border-radius:22px;padding:16px;background:linear-gradient(180deg,rgba(18,16,30,.74),rgba(7,6,13,.74));backdrop-filter:blur(16px);box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);width:100%;max-width:440px}
+.scan-head{display:flex;align-items:center;justify-content:space-between;font-family:"Spline Sans Mono";font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:12px}
+.scan-head .dotpulse{width:8px;height:8px;border-radius:50%;background:var(--cyan);animation:bioPulse 1.8s var(--e) infinite}
+@keyframes bioPulse{0%{box-shadow:0 0 0 0 rgba(95,224,210,.55)}70%{box-shadow:0 0 0 12px rgba(95,224,210,0)}100%{box-shadow:0 0 0 0 rgba(95,224,210,0)}}
+.scan-view{position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:radial-gradient(120% 120% at 50% 30%,#1a2740 0%,#0d1220 55%,#07060d 100%)}
+.scan-view video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s var(--e)}
+.scan-view.live video{opacity:1}
+.scan-view canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2}
+.scan-ghost{position:absolute;inset:0;display:grid;place-items:center;z-index:1;transition:opacity .5s var(--e)}
+.scan-view.live .scan-ghost{opacity:0}
+.scan-ghost .muz{font-size:72px;filter:drop-shadow(0 8px 30px rgba(95,224,210,.4))}
+.scan-status{position:absolute;left:12px;right:12px;bottom:12px;z-index:3;font-family:"Spline Sans Mono";font-size:12px;line-height:1.4;letter-spacing:.02em;color:#eaf6f3;background:rgba(7,6,13,.55);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 11px;backdrop-filter:blur(8px)}
+.scan-chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+.scan-chips .qc{font-family:"Spline Sans Mono";font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:6px 11px;border-radius:100px;border:1px solid rgba(243,236,221,.18);color:#b9b3c4;display:flex;align-items:center;gap:7px;transition:.4s var(--e)}
+.scan-chips .qc i{width:7px;height:7px;border-radius:50%;background:#6b6675;transition:.4s var(--e)}
+.scan-chips .qc.ok{color:#eafaf6;border-color:rgba(95,224,210,.5)}
+.scan-chips .qc.ok i{background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.scan-dots{display:flex;gap:8px;align-items:center;margin:14px 0 2px;font-family:"Spline Sans Mono";font-size:12px;color:#b9b3c4;letter-spacing:.05em}
+.scan-dots b{color:#f3ecdd}
+.scan-dots .d3{width:26px;height:6px;border-radius:100px;background:rgba(243,236,221,.16);transition:.4s var(--e)}
+.scan-dots .d3.on{background:var(--cyan);box-shadow:0 0 12px rgba(95,224,210,.5)}
+.scan-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.scan-btn{flex:1;min-width:140px;cursor:pointer;font-family:"Spline Sans Mono";font-size:13px;letter-spacing:.04em;padding:14px 16px;border-radius:12px;border:1px solid var(--cyan);background:transparent;color:var(--bone);transition:.3s var(--e)}
+.scan-btn.primary{background:var(--cyan);color:#06131a;border-color:var(--cyan)}
+.scan-btn:hover{transform:translateY(-2px)}
+.scan-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.scan-result{margin-top:14px;border-top:1px solid rgba(243,236,221,.12);padding-top:14px;display:flex;align-items:center;gap:14px;min-height:56px}
+.scan-ring{--p:0;width:52px;height:52px;border-radius:50%;flex:none;background:conic-gradient(var(--cyan) calc(var(--p)*1%),rgba(243,236,221,.12) 0);display:grid;place-items:center;transition:--p .8s var(--e)}
+.scan-ring>span{width:40px;height:40px;border-radius:50%;background:#0b0912;display:grid;place-items:center;font-family:"Spline Sans Mono";font-size:11px;color:var(--cyan)}
+.scan-result .rt b{display:block;font-family:"Clash Display";font-size:16px;color:#f3ecdd}
+.scan-result .rt span{font-size:13px;color:#b9b3c4;line-height:1.4}
+.bio-pipe{display:grid;gap:14px;margin-top:34px}
+.bio-pipe .row{display:flex;gap:14px;align-items:flex-start;border-left:2px solid var(--cyan);padding-left:16px}
+.bio-pipe .row .k{font-family:"Spline Sans Mono";font-size:12px;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase;min-width:74px;padding-top:4px}
+.bio-pipe .row h4{font-family:"Clash Display";font-weight:700;font-size:20px;margin:0 0 3px}
+.bio-pipe .row p{font-size:15px;color:#d8d2e2;line-height:1.5;margin:0;max-width:42ch}
+#eco .eco-stats .stat{grid-template-columns:auto minmax(0,1fr)!important;align-items:center;column-gap:22px}
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to story</a>
@@ -1255,6 +1298,7 @@ body{background:#05040a}
   <a data-h href="#hero"><span>Start</span></a>
   <a data-h href="#story"><span>Problem</span></a>
   <a data-h href="#id"><span>Living ID</span></a>
+  <a data-h href="#scan"><span>Nose ID</span></a>
   <a data-h href="#eco"><span>Ecosystem</span></a>
   <a data-h href="#home"><span>Promise</span></a>
   <a data-h href="#join"><span>Join</span></a>
@@ -1276,6 +1320,7 @@ body{background:#05040a}
       <div class="chip ok"><span class="d"></span>Vaccinated</div>
       <div class="chip ok"><span class="d"></span>Sterilised · ABC</div>
       <div class="chip ok"><span class="d"></span>NFC + QR active</div>
+      <div class="chip ok"><span class="d"></span>Nose-print enrolled</div>
       <div class="chip"><span class="d"></span>Community dog</div>
       <div class="chip live" id="profileMode"><span class="d"></span>Known in community</div>
     </div>
@@ -1283,6 +1328,7 @@ body{background:#05040a}
       <button class="pbtn hot" id="foundBtn" type="button">Report sighting</button>
       <button class="pbtn" id="lostBtn" type="button" aria-pressed="false">Lost mode</button>
       <a class="pbtn" href="mailto:hello@pawwltu.com?subject=Found%20Cristiano">Message guardian</a>
+      <a class="pbtn" href="#scan" data-h>Scan nose</a>
       <a class="pbtn" href="#join" data-h>Get this ID</a>
     </div>
     <div class="lostbox" aria-live="polite">
@@ -1301,6 +1347,7 @@ body{background:#05040a}
     <div class="prow"><span>Area</span><span>Navrangpura, Ahmedabad</span></div>
     <div class="prow"><span>Last seen</span><span id="lastSeen">Today · 7:42 AM</span></div>
     <div class="prow"><span>Microchip</span><span>982 000 1234 5678</span></div>
+    <div class="prow"><span>Nose-print ID</span><span>NP-4F2A · 512-d · 98.6% match</span></div>
     <h5>Life on the record</h5>
     <div class="tl" id="lifeTimeline">
       <div class="tli"><div class="td">2024 · Found</div><div class="tt">Tagged on the street and given a name.</div></div>
@@ -1319,7 +1366,7 @@ body{background:#05040a}
 <header class="hdr">
   <div class="logo">PAWWLTU</div>
   <nav>
-    <a data-h href="#story">Story</a><a data-h href="#id">The ID</a>
+    <a data-h href="#story">Story</a><a data-h href="#id">The ID</a><a data-h href="#scan">Nose ID</a>
     <a data-h href="#eco">Ecosystem</a><a data-h href="#join">Join</a>
   </nav>
   <a data-h class="mono top-cta" href="#join">Get a tag ↗</a>
@@ -1329,8 +1376,9 @@ body{background:#05040a}
   <div class="sheet">
     <a data-h href="#story">Story <span>01</span></a>
     <a data-h href="#id">The ID <span>02</span></a>
-    <a data-h href="#eco">Ecosystem <span>03</span></a>
-    <a data-h href="#join">Join <span>04</span></a>
+    <a data-h href="#scan">Nose ID <span>03</span></a>
+    <a data-h href="#eco">Ecosystem <span>04</span></a>
+    <a data-h href="#join">Join <span>05</span></a>
   </div>
 </div>
 
@@ -1364,7 +1412,7 @@ body{background:#05040a}
         <div class="fct"><span class="fn">Pet OS</span><span class="fl">the layer every service can run on</span></div>
       </div>
       <div class="hero-deck fade" aria-label="Pawwltu live care signals">
-        <div class="hero-card live"><span>Layer 01</span><strong>Verified animal ID</strong><em>the record that follows the animal for life</em></div>
+        <div class="hero-card live"><span>Layer 01</span><strong>Biometric living ID</strong><em>nose-print &amp; face recognition that follows the animal for life</em></div>
         <div class="hero-card"><span>Layer 02</span><strong>Care operations</strong><em>vaccines, ABC, medical history and lost alerts</em></div>
         <div class="hero-card"><span>Layer 03</span><strong>Municipal data</strong><em>street-level visibility for city animal management</em></div>
         <div class="hero-card"><span>Full vision</span><strong>Pet OS India</strong><em>commerce and services only after identity exists</em></div>
@@ -1398,15 +1446,15 @@ body{background:#05040a}
     <div class="inner il">
       <div class="eyebrow fade">02 — The living ID</div>
       <h2 class="big fade">One scan.<br>A whole <span class="kw">identity.</span></h2>
-      <p class="lede fade">A QR + NFC tag opens a verified record: name, photo, guardian, location, vaccination, ABC status, medical history and recovery actions.</p>
-      <p class="lede fade" style="margin-top:14px;color:#b8b2c6">For owned pets, it becomes a trusted health and reunite profile. For community dogs, it becomes the missing operational layer for caretakers, vets, NGOs and municipal teams.</p>
+      <p class="lede fade">One identity, reachable three ways: a QR + NFC tag, and — trained specifically for animals — <span class="serif">nose-print recognition</span> with live face tracking. Any of them opens the same verified record: guardian, location, vaccination, ABC status, medical history and recovery actions.</p>
+      <p class="lede fade" style="margin-top:14px;color:#b8b2c6">Tags can be lost; the animal can’t. Biometrics make the body itself the key — so owned pets and community dogs stay identifiable even without a collar.</p>
       <div class="eco fade">
-        <div class="pill"><span class="d"></span>Owner or caretaker mapping</div>
-        <div class="pill"><span class="d"></span>Vaccination &amp; ABC programme status</div>
-        <div class="pill"><span class="d"></span>Medical and treatment history</div>
-        <div class="pill"><span class="d"></span>Location and last-seen context</div>
-        <div class="pill"><span class="d"></span>Tap-to-reunite lost &amp; found</div>
-        <div class="pill"><span class="d"></span>Free to scan, trusted by design</div>
+        <div class="pill"><span class="d"></span>Nose-print biometric ID</div>
+        <div class="pill"><span class="d"></span>Live face &amp; muzzle tracking</div>
+        <div class="pill"><span class="d"></span>QR + NFC tag fallback</div>
+        <div class="pill"><span class="d"></span>Vaccination &amp; ABC status</div>
+        <div class="pill"><span class="d"></span>Medical &amp; treatment history</div>
+        <div class="pill"><span class="d"></span>Tap-or-scan lost &amp; found</div>
       </div>
       <div class="taglab fade">
         <div class="tagplate idtag-showcase" aria-label="Pawwltu flip ID preview">
@@ -1430,22 +1478,60 @@ body{background:#05040a}
           </div>
         </div>
         <div class="tagmeta">
-          <div><b>Street ready</b><span>Designed for rain, dust, low light and everyday Indian conditions.</span></div>
-          <div><b>Public scan</b><span>Anyone can help without needing an app or prior account.</span></div>
-          <div><b>Living record</b><span>The identity grows as care events are added over time.</span></div>
+          <div><b>Tag or nose</b><span>Scan the QR/NFC tag — or scan the nose when there’s no tag at all.</span></div>
+          <div><b>Trained for animals</b><span>Recognition built on animal nose prints, not repurposed human face tech.</span></div>
+          <div><b>Living record</b><span>Every scan, vaccine and sighting grows the same identity over time.</span></div>
         </div>
       </div>
       <div class="eyebrow fade" style="margin-top:54px">How it works</div>
       <div class="steps fade">
-        <div class="step"><div class="sn">01</div><h4>Identify</h4><p>Owned pets and community dogs get one verified profile instead of fragmented care notes.</p></div>
+        <div class="step"><div class="sn">01</div><h4>Enroll</h4><p>Capture a few guided nose-print angles; a QR + NFC tag is issued alongside as a backup key.</p></div>
         <div class="step"><div class="sn">02</div><h4>Operate</h4><p>Scans, vaccines, ABC follow-ups, sightings and treatments update the same record.</p></div>
-        <div class="step"><div class="sn">03</div><h4>Scale</h4><p>When identities accumulate, cities and partners finally get a usable animal data layer.</p></div>
+        <div class="step"><div class="sn">03</div><h4>Recover</h4><p>A stranger’s nose scan searches the registry to reunite a lost animal in minutes.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2b BIOMETRIC SCAN -->
+  <section class="scene" id="scan" data-chapter="4" style="min-height:150vh">
+    <div class="inner">
+      <div class="bio-copy">
+        <div class="eyebrow fade">02½ — Biometric identity</div>
+        <h2 class="big fade">Scan the nose.<br>Not just the <span class="kw">tag.</span></h2>
+        <p class="lede fade">Pawwltu adds AI trained for animals — <span class="serif">nose-print recognition</span> and live face tracking — so the body itself becomes the key to the record. A dog’s nose print is as unique as a human fingerprint.</p>
+        <p class="lede fade" style="margin-top:14px;color:#b8b2c6">Point a phone, let the guide frame the muzzle, and one capture links to the same verified Living ID — tag or no tag.</p>
+        <div class="bio-pipe fade">
+          <div class="row"><div class="k">Track</div><div><h4>Face &amp; muzzle tracking</h4><p>On-device detection frames the muzzle in real time and only captures when lighting, distance and focus are right.</p></div></div>
+          <div class="row"><div class="k">Embed</div><div><h4>Nose-print signature</h4><p>A model trained on animal nose prints turns the ridge pattern into a private 512-dimension signature — never a raw photo.</p></div></div>
+          <div class="row"><div class="k">Match</div><div><h4>Recover &amp; verify</h4><p>Enroll once; later a stranger’s scan searches the registry to reunite a lost dog or confirm identity at the vet.</p></div></div>
+        </div>
+      </div>
+      <div class="scanner fade" aria-label="Pawwltu nose-print scanner demo">
+        <div class="scan-head"><span>Pawwltu · Nose-Print Scan</span><span class="dotpulse" aria-hidden="true"></span></div>
+        <div class="scan-view" id="scanView">
+          <video id="scanVideo" playsinline muted></video>
+          <div class="scan-ghost"><div class="muz">🐕</div></div>
+          <canvas id="scanCanvas"></canvas>
+          <div class="scan-status" id="scanStatus">Point at the muzzle — or enable the camera to try it live.</div>
+        </div>
+        <div class="scan-chips" id="scanChips">
+          <span class="qc"><i></i>Lighting</span><span class="qc"><i></i>Distance</span><span class="qc"><i></i>Focus</span><span class="qc"><i></i>Liveness</span>
+        </div>
+        <div class="scan-dots">Enrollment <b id="scanCount">0</b>/3<span class="d3"></span><span class="d3"></span><span class="d3"></span></div>
+        <div class="scan-actions">
+          <button class="scan-btn" id="scanEnable" type="button">Enable camera</button>
+          <button class="scan-btn primary" id="scanCapture" type="button">Capture nose print</button>
+        </div>
+        <div class="scan-result" id="scanResult" hidden>
+          <div class="scan-ring" id="scanRing"><span id="scanRingT">0%</span></div>
+          <div class="rt"><b id="scanRT">Ready to enroll</b><span id="scanRS">Capture 3 angles to build the signature.</span></div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- 3 ECOSYSTEM -->
-  <section class="scene" id="eco" data-chapter="4" style="min-height:180vh">
+  <section class="scene" id="eco" data-chapter="5" style="min-height:180vh">
     <div class="inner wide">
       <div class="scene-copy eco-intro">
         <div class="eyebrow fade">03 — The Pet OS</div>
@@ -1494,7 +1580,7 @@ body{background:#05040a}
   <!-- type-break removed -->
 
   <!-- 4 HOME / heart -->
-  <section class="scene" id="home" data-chapter="5" style="min-height:150vh">
+  <section class="scene" id="home" data-chapter="6" style="min-height:150vh">
     <div class="inner center">
       <div class="eyebrow fade" style="color:var(--gold)">04 — The principle</div>
       <h2 class="big fade">Fix identity,<br>then build the <span class="serif" style="text-transform:none">ecosystem.</span></h2>
@@ -1511,7 +1597,7 @@ body{background:#05040a}
   </section>
 
   <!-- 5 CTA -->
-  <section class="scene" id="join" data-chapter="6" style="min-height:120vh">
+  <section class="scene" id="join" data-chapter="7" style="min-height:120vh">
     <div class="inner il">
       <div class="eyebrow fade">Pilot the layer</div>
       <h2 class="big fade">Build the animal<br><span class="kw">identity graph.</span></h2>
@@ -1537,7 +1623,7 @@ body{background:#05040a}
 
 <footer>
   <div class="fgrid">
-    <div class="fcol"><h4>Identity layer</h4><a data-h href="#id">Verified Animal ID</a><a data-h href="#id">Owned Pets</a><a data-h href="#id">Community Dogs</a><a data-h href="#id">Lost &amp; Found</a></div>
+    <div class="fcol"><h4>Identity layer</h4><a data-h href="#id">Verified Animal ID</a><a data-h href="#scan">Nose-Print Biometrics</a><a data-h href="#id">Community Dogs</a><a data-h href="#id">Lost &amp; Found</a></div>
     <div class="fcol"><h4>Pet OS</h4><a data-h href="#eco">Provider OS</a><a data-h href="#eco">Municipal Dashboard</a><a data-h href="#eco">ABC Tracking</a><a data-h href="#eco">Insights &amp; Impact</a></div>
     <div class="fcol"><h4>Connect</h4><a href="https://www.instagram.com/pawwltu/" target="_blank" rel="noopener">Instagram</a><a href="https://www.linkedin.com/company/pawwltu/" target="_blank" rel="noopener">LinkedIn</a><a href="mailto:hello@pawwltu.com">hello@pawwltu.com</a></div>
     <div class="fcol"><h4>Company</h4><a data-h href="#story">About</a><a href="mailto:hello@pawwltu.com?subject=Careers%20at%20Pawwltu">Careers</a><a href="mailto:hello@pawwltu.com?subject=Pawwltu%20press">Press</a><a href="mailto:hello@pawwltu.com">Contact</a></div>
@@ -1587,21 +1673,23 @@ function buildScatter(){var a=new Float32Array(N*3);for(var i=0;i<N;i++){var r=2
 function buildNetwork(){var a=new Float32Array(N*3),R=1.7,ga=Math.PI*(3-Math.sqrt(5));for(var i=0;i<N;i++){var y=1-(i/(N-1))*2,r=Math.sqrt(1-y*y),th=i*ga,j=0.9+seed[i]*0.25;a[i*3]=Math.cos(th)*r*R*j;a[i*3+1]=y*R*j;a[i*3+2]=Math.sin(th)*r*R*j;}return a;}
 function buildCat(){var a=new Float32Array(N*3);var cv=document.createElement('canvas'),W=cv.width=300,H=cv.height=300,g=cv.getContext('2d');if(!g){return buildSil('dog');}g.fillStyle='#fff';g.strokeStyle='#fff';g.lineJoin='round';g.lineCap='round';g.beginPath();g.moveTo(259.3,32.7);g.lineTo(251.7,34.6);g.lineTo(212.9,59.2);g.lineTo(205.4,66.8);g.lineTo(195.9,86.7);g.lineTo(178.9,99.0);g.lineTo(172.2,112.2);g.lineTo(135.3,125.5);g.lineTo(114.5,145.3);g.lineTo(99.4,179.4);g.lineTo(96.5,196.4);g.lineTo(98.4,237.1);g.lineTo(95.6,239.9);g.lineTo(39.8,244.7);g.lineTo(28.4,250.4);g.lineTo(18.0,264.5);g.lineTo(193.1,269.3);g.lineTo(195.9,267.4);g.lineTo(194.9,258.9);g.lineTo(201.6,256.0);g.lineTo(219.5,268.3);g.lineTo(247.9,267.4);g.lineTo(249.8,261.7);g.lineTo(241.3,253.2);g.lineTo(226.2,247.5);g.lineTo(222.4,242.8);g.lineTo(222.4,213.5);g.lineTo(219.5,204.0);g.lineTo(239.4,168.0);g.lineTo(237.5,145.3);g.lineTo(245.1,125.5);g.lineTo(255.5,116.0);g.lineTo(270.6,111.3);g.lineTo(281.1,99.0);g.lineTo(270.6,67.7);g.lineTo(254.6,52.6);g.closePath();g.fill();var img;try{img=g.getImageData(0,0,W,H).data;}catch(e){return buildSil('dog');}var pts=[],x,y;for(y=0;y<H;y++)for(x=0;x<W;x++){if(img[(y*W+x)*4+3]>130){pts.push(x);pts.push(y);}}var np=pts.length/2;if(np<24){return buildSil('dog');}var minx=1e9,maxx=-1e9,miny=1e9,maxy=-1e9,k;for(k=0;k<np;k++){var px=pts[k*2],py=pts[k*2+1];if(px<minx)minx=px;if(px>maxx)maxx=px;if(py<miny)miny=py;if(py>maxy)maxy=py;}var bw=(maxx-minx)||1,bh=(maxy-miny)||1,tH=2.2,tW=tH*bw/bh;function MX(qx,qy){return ((qx-minx)/bw-0.5)*tW;}function MY(qx,qy){return -((qy-miny)/bh-0.5)*tH;}function solid(sx,sy){return (sx<0||sy<0||sx>=W||sy>=H)?0:(img[(sy*W+sx)*4+3]>130?1:0);}var bx0=-1,by0=-1,yy,xx;for(yy=0;yy<H&&bx0<0;yy++)for(xx=0;xx<W;xx++){if(solid(xx,yy)){bx0=xx;by0=yy;break;}}var nbr=[[-1,-1],[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0]],bnd=[];if(bx0>=0){var cb=[bx0,by0],prev=[bx0-1,by0];bnd.push([cb[0],cb[1]]);var it=0,mxx=W*H*4;do{var pdx=prev[0]-cb[0],pdy=prev[1]-cb[1],kk=0,nn;for(nn=0;nn<8;nn++){if(nbr[nn][0]===pdx&&nbr[nn][1]===pdy){kk=nn;break;}}var found=null,cc;for(cc=1;cc<=8;cc++){var nk=(kk+cc)%8,gx2=cb[0]+nbr[nk][0],gy2=cb[1]+nbr[nk][1];if(solid(gx2,gy2)){found=[gx2,gy2];prev=[cb[0]+nbr[(nk+7)%8][0],cb[1]+nbr[(nk+7)%8][1]];break;}}if(!found)break;cb=found;bnd.push([cb[0],cb[1]]);it++;}while((cb[0]!==bx0||cb[1]!==by0)&&it<mxx);}CATEDGE=new Uint8Array(N);CATCOLLAR=new Uint8Array(N);var Nb=Math.round(N*0.06),i;if(bnd.length<8){for(i=0;i<N;i++){var sa=(Math.random()*np)|0;a[i*3]=MX(pts[sa*2],pts[sa*2+1]);a[i*3+1]=MY(pts[sa*2],pts[sa*2+1]);a[i*3+2]=(seed[i]-0.5)*0.32;}return a;}var seg=[],tot=0,si;for(si=0;si<bnd.length;si++){var q0=bnd[si],q1=bnd[(si+1)%bnd.length],dd=Math.sqrt((q1[0]-q0[0])*(q1[0]-q0[0])+(q1[1]-q0[1])*(q1[1]-q0[1]));seg.push(dd);tot+=dd;}var step=tot/Nb,jj=0,curl=0,kb;for(kb=0;kb<Nb;kb++){var tg=kb*step;while(jj<seg.length-1&&curl+seg[jj]<tg){curl+=seg[jj];jj++;}var r0=bnd[jj],r1=bnd[(jj+1)%bnd.length],ff=seg[jj]>1e-9?(tg-curl)/seg[jj]:0,ox=r0[0]+(r1[0]-r0[0])*ff,oy=r0[1]+(r1[1]-r0[1])*ff;a[kb*3]=MX(ox,oy);a[kb*3+1]=MY(ox,oy);a[kb*3+2]=(seed[kb]-0.5)*0.08;CATEDGE[kb]=1;}var bpx=[],tpx=[];for(var hk=0;hk<np;hk++){var hxx=pts[hk*2],hyy=pts[hk*2+1];if(hxx>=170&&hxx<=242&&Math.abs(hyy-(102+(hxx-170)*0.40))<=5){bpx.push(hk);}if((hxx-232)*(hxx-232)+(hyy-168)*(hyy-168)<=36){tpx.push(hk);}}var Kb=bpx.length>20?Math.round(N*0.07):0,Kt=0;tpx=tpx;var Ni1=N-Kb-Kt;for(i=Nb;i<Ni1;i++){var sb=(Math.random()*np)|0;a[i*3]=MX(pts[sb*2],pts[sb*2+1]);a[i*3+1]=MY(pts[sb*2],pts[sb*2+1]);a[i*3+2]=(seed[i]-0.5)*0.32;}for(i=Ni1;i<Ni1+Kb;i++){var cc2=bpx[(Math.random()*bpx.length)|0];a[i*3]=MX(pts[cc2*2],pts[cc2*2+1]);a[i*3+1]=MY(pts[cc2*2],pts[cc2*2+1]);a[i*3+2]=(seed[i]-0.5)*0.06;CATCOLLAR[i]=1;}for(i=Ni1+Kb;i<N;i++){var ct=tpx.length?tpx[(Math.random()*tpx.length)|0]:bpx[(Math.random()*bpx.length)|0];a[i*3]=MX(pts[ct*2],pts[ct*2+1]);a[i*3+1]=MY(pts[ct*2],pts[ct*2+1]);a[i*3+2]=(seed[i]-0.5)*0.06;CATCOLLAR[i]=1;}return a;}
 var COLLAR,DOGCOLLAR,DOGINT,DOGINX,DOGINY,DOGEDGE,PUPEDGE,PUPINT,PUPINX,PUPINY,CATEDGE,CATINT,CATINX,CATINY,CATCOLLAR,COLLARRAND,collarColR=1,collarColG=1,collarColB=1,collarPrev=0,collarMix=0;function hsv2rgb(h,s,v){var i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),u=v*(1-(1-f)*s),r,g,b;switch(i%6){case 0:r=v;g=u;b=p;break;case 1:r=q;g=v;b=p;break;case 2:r=p;g=v;b=u;break;case 3:r=p;g=q;b=v;break;case 4:r=u;g=p;b=v;break;default:r=v;g=p;b=q;}return [r,g,b];}function buildPuppy(){var a=new Float32Array(N*3),sc=SHP.puppy.s,dp=SHP.puppy.d,src=SH.puppy,G=160;function grid(dil){var o=new Uint8Array(G*G),gi;for(gi=0;gi<src.length;gi++){var p=src[gi]||[0,0];var cx=Math.floor((p[0]+1)/2*G),cy=Math.floor((p[1]+1)/2*G);if(cx<0)cx=0;if(cx>=G)cx=G-1;if(cy<0)cy=0;if(cy>=G)cy=G-1;o[cy*G+cx]=1;}for(var d=0;d<dil;d++){var nb=o.slice(),gy,gx;for(gy=0;gy<G;gy++)for(gx=0;gx<G;gx++){if(o[gy*G+gx]){for(var dy=-1;dy<=1;dy++)for(var dx=-1;dx<=1;dx++){var nx=gx+dx,ny=gy+dy;if(nx>=0&&nx<G&&ny>=0&&ny<G)nb[ny*G+nx]=1;}}}o=nb;}return o;}var occ=grid(2),occT=grid(1);function get(x,y){return (x<0||y<0||x>=G||y>=G)?0:occ[y*G+x];}var start=null,ys,xs;for(ys=0;ys<G&&!start;ys++)for(xs=0;xs<G;xs++){if(get(xs,ys)){start=[xs,ys];break;}}var nbr=[[-1,-1],[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0]];var bnd=[];if(start){var cb=start.slice(),prev=[start[0]-1,start[1]];bnd.push(cb.slice());var sp=start.slice(),it=0,mx=G*G*8;do{var pdx=prev[0]-cb[0],pdy=prev[1]-cb[1],kk=0,nn;for(nn=0;nn<8;nn++){if(nbr[nn][0]===pdx&&nbr[nn][1]===pdy){kk=nn;break;}}var found=null,cc;for(cc=1;cc<=8;cc++){var nk=(kk+cc)%8,gx2=cb[0]+nbr[nk][0],gy2=cb[1]+nbr[nk][1];if(get(gx2,gy2)){found=[gx2,gy2];prev=[cb[0]+nbr[(nk+7)%8][0],cb[1]+nbr[(nk+7)%8][1]];break;}}if(!found)break;cb=found;bnd.push(cb.slice());it++;}while((cb[0]!==sp[0]||cb[1]!==sp[1])&&it<mx);}var pts=[],bi;for(bi=0;bi<bnd.length;bi++)pts.push([(bnd[bi][0]+0.5)/G*2-1,(bnd[bi][1]+0.5)/G*2-1]);COLLAR=new Uint8Array(N);PUPEDGE=new Uint8Array(N);var K=Math.max(90,Math.round(N*0.15)),Nb=Math.round(N*0.08),Ni=N-K-Nb;if(Nb<1||pts.length<2){var fb=buildSil('puppy');return fb;}var seg=[],tot=0,si;for(si=0;si<pts.length;si++){var q0=pts[si],q1=pts[(si+1)%pts.length];var dd=Math.sqrt((q1[0]-q0[0])*(q1[0]-q0[0])+(q1[1]-q0[1])*(q1[1]-q0[1]));seg.push(dd);tot+=dd;}var step=tot/Nb,jj=0,curl=0,kb;for(kb=0;kb<Nb;kb++){var tg=kb*step;while(jj<seg.length-1&&curl+seg[jj]<tg){curl+=seg[jj];jj++;}var r0=pts[jj],r1=pts[(jj+1)%pts.length],ff=seg[jj]>1e-9?(tg-curl)/seg[jj]:0;var ox=r0[0]+(r1[0]-r0[0])*ff,oy=r0[1]+(r1[1]-r0[1])*ff;a[kb*3]=ox*sc;a[kb*3+1]=oy*sc;a[kb*3+2]=(seed[kb]-0.5)*dp*0.12;PUPEDGE[kb]=1;}function inside(x,y){var cx=Math.floor((x+1)/2*G),cy=Math.floor((y+1)/2*G);return cx>=0&&cx<G&&cy>=0&&cy<G&&occT[cy*G+cx];}var fc=0,guard=0;while(fc<Ni&&guard<Ni*80){var fx=Math.random()*2-1,fy=Math.random()*2-1;if(inside(fx,fy)){var fi=Nb+fc;a[fi*3]=fx*sc;a[fi*3+1]=fy*sc;a[fi*3+2]=(seed[fi]-0.5)*dp*0.6;fc++;}guard++;}for(;fc<Ni;fc++){var fi2=Nb+fc;a[fi2*3]=0;a[fi2*3+1]=0;a[fi2*3+2]=0;}var cxL=-0.09,cxR=0.47,cyc=0.20,dip=0.05,th=0.05,xm=(cxL+cxR)*0.5,hw=(cxR-cxL)*0.5;var tagK=Math.round(K*0.14),bandK=K-tagK,i,i3,j;for(j=0;j<bandK;j++){i=N-1-j;i3=i*3;var tt=Math.random();var x=cxL+(cxR-cxL)*tt;var mid=(x-xm)/hw;var yb=cyc-dip*(1-mid*mid);var y=yb+(Math.random()-0.5)*th;a[i3]=x*sc;a[i3+1]=y*sc;a[i3+2]=(seed[i]-0.5)*dp*0.25;COLLAR[i]=1;PUPEDGE[i]=0;}var tcx=xm,tcy=cyc-dip-0.05,tr=0.035;for(j=0;j<tagK;j++){i=N-1-bandK-j;i3=i*3;var ang=Math.random()*6.2832,rr=Math.sqrt(Math.random())*tr;a[i3]=(tcx+Math.cos(ang)*rr)*sc;a[i3+1]=(tcy+Math.sin(ang)*rr)*sc;a[i3+2]=(seed[i]-0.5)*dp*0.25;COLLAR[i]=1;PUPEDGE[i]=0;}return a;}
-function buildDog(){var a=new Float32Array(N*3),sc=SHP.dog.s,dp=SHP.dog.d,src=SH.dog,G=160;function grid(dil){var o=new Uint8Array(G*G),gi;for(gi=0;gi<src.length;gi++){var p=src[gi]||[0,0];var cx=Math.floor((p[0]+1)/2*G),cy=Math.floor((p[1]+1)/2*G);if(cx<0)cx=0;if(cx>=G)cx=G-1;if(cy<0)cy=0;if(cy>=G)cy=G-1;o[cy*G+cx]=1;}for(var d=0;d<dil;d++){var nb=o.slice(),gy,gx;for(gy=0;gy<G;gy++)for(gx=0;gx<G;gx++){if(o[gy*G+gx]){for(var dy=-1;dy<=1;dy++)for(var dx=-1;dx<=1;dx++){var nx=gx+dx,ny=gy+dy;if(nx>=0&&nx<G&&ny>=0&&ny<G)nb[ny*G+nx]=1;}}}o=nb;}return o;}var occ=grid(2),occT=grid(1);function get(x,y){return (x<0||y<0||x>=G||y>=G)?0:occ[y*G+x];}var start=null,ys,xs;for(ys=0;ys<G&&!start;ys++)for(xs=0;xs<G;xs++){if(get(xs,ys)){start=[xs,ys];break;}}var nbr=[[-1,-1],[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0]];var bnd=[];if(start){var cb=start.slice(),prev=[start[0]-1,start[1]];bnd.push(cb.slice());var sp=start.slice(),it=0,mx=G*G*8;do{var pdx=prev[0]-cb[0],pdy=prev[1]-cb[1],kk=0,nn;for(nn=0;nn<8;nn++){if(nbr[nn][0]===pdx&&nbr[nn][1]===pdy){kk=nn;break;}}var found=null,cc;for(cc=1;cc<=8;cc++){var nk=(kk+cc)%8,gx2=cb[0]+nbr[nk][0],gy2=cb[1]+nbr[nk][1];if(get(gx2,gy2)){found=[gx2,gy2];prev=[cb[0]+nbr[(nk+7)%8][0],cb[1]+nbr[(nk+7)%8][1]];break;}}if(!found)break;cb=found;bnd.push(cb.slice());it++;}while((cb[0]!==sp[0]||cb[1]!==sp[1])&&it<mx);}var pts=[],bi;for(bi=0;bi<bnd.length;bi++)pts.push([(bnd[bi][0]+0.5)/G*2-1,(bnd[bi][1]+0.5)/G*2-1]);DOGCOLLAR=new Uint8Array(N);DOGEDGE=new Uint8Array(N);var Kc=Math.max(80,Math.round(N*0.10)),Nb=Math.round(N*0.08),Ni=N-Kc-Nb;if(Nb<1||pts.length<2){return buildSil('dog');}var seg=[],tot=0,si;for(si=0;si<pts.length;si++){var q0=pts[si],q1=pts[(si+1)%pts.length];var dd=Math.sqrt((q1[0]-q0[0])*(q1[0]-q0[0])+(q1[1]-q0[1])*(q1[1]-q0[1]));seg.push(dd);tot+=dd;}var step=tot/Nb,jj=0,curl=0,kb;for(kb=0;kb<Nb;kb++){var tg=kb*step;while(jj<seg.length-1&&curl+seg[jj]<tg){curl+=seg[jj];jj++;}var r0=pts[jj],r1=pts[(jj+1)%pts.length],ff=seg[jj]>1e-9?(tg-curl)/seg[jj]:0;var ox=r0[0]+(r1[0]-r0[0])*ff,oy=r0[1]+(r1[1]-r0[1])*ff;a[kb*3]=ox*sc;a[kb*3+1]=oy*sc;a[kb*3+2]=(seed[kb]-0.5)*dp*0.12;DOGEDGE[kb]=1;}function inside(x,y){var cx=Math.floor((x+1)/2*G),cy=Math.floor((y+1)/2*G);return cx>=0&&cx<G&&cy>=0&&cy<G&&occT[cy*G+cx];}var fc=0,guard=0;while(fc<Ni&&guard<Ni*80){var fx=Math.random()*2-1,fy=Math.random()*2-1;if(inside(fx,fy)){var fi=Nb+fc;a[fi*3]=fx*sc;a[fi*3+1]=fy*sc;a[fi*3+2]=(seed[fi]-0.5)*dp*0.6;fc++;}guard++;}for(;fc<Ni;fc++){var fi2=Nb+fc;a[fi2*3]=0;a[fi2*3+1]=0;a[fi2*3+2]=0;}var cxL=0.22,cxR=0.66,cyc=0.46,tilt=-0.13,th=0.04,xm=(cxL+cxR)*0.5,hw=(cxR-cxL)*0.5,ci,ci3,cj;for(cj=0;cj<Kc;cj++){ci=N-1-cj;ci3=ci*3;var ctt=cj/(Kc-1);var cxx=cxL+(cxR-cxL)*ctt;var cmid=(cxx-xm)/hw;var cyb=cyc+tilt*cmid;var cyy=cyb+(Math.random()-0.5)*th;a[ci3]=cxx*sc;a[ci3+1]=cyy*sc;a[ci3+2]=(seed[ci]-0.5)*dp*0.25;DOGCOLLAR[ci]=1;DOGEDGE[ci]=0;}return a;}TARGETS.dog=buildDog();TARGETS.paw=buildSil('paw');TARGETS.tag=buildSil('tag');TARGETS.heart=buildSil('heart');TARGETS.scatter=buildScatter();TARGETS.network=buildNetwork();TARGETS.puppy=buildPuppy();TARGETS.cristiano=buildSil('cristiano');TARGETS.cat=buildCat();
+function buildNose(){var a=new Float32Array(N*3);var cv=document.createElement('canvas'),W=cv.width=300,H=cv.height=300,g=cv.getContext('2d');if(!g){return buildScatter();}g.clearRect(0,0,W,H);g.fillStyle='#fff';g.beginPath();g.moveTo(150,74);g.bezierCurveTo(120,66,70,74,50,104);g.bezierCurveTo(30,132,32,168,52,196);g.bezierCurveTo(70,224,104,238,132,232);g.bezierCurveTo(142,230,146,222,150,214);g.bezierCurveTo(154,222,158,230,168,232);g.bezierCurveTo(196,238,230,224,248,196);g.bezierCurveTo(268,168,270,132,250,104);g.bezierCurveTo(230,74,180,66,150,74);g.closePath();g.fill();g.globalCompositeOperation='destination-out';function hole(cx,cy,rx,ry,rot){g.save();g.translate(cx,cy);g.rotate(rot);g.beginPath();g.ellipse(0,0,rx,ry,0,0,6.2832);g.fill();g.restore();}hole(112,168,22,38,-0.5);hole(127,201,12,23,-0.5);hole(188,168,22,38,0.5);hole(173,201,12,23,0.5);g.lineWidth=13;g.strokeStyle='#000';g.lineCap='round';g.beginPath();g.moveTo(150,152);g.lineTo(150,242);g.stroke();g.globalCompositeOperation='source-over';var img;try{img=g.getImageData(0,0,W,H).data;}catch(e){return buildScatter();}function solid(x,y){return (x<0||y<0||x>=W||y>=H)?0:(img[(y*W+x)*4+3]>140?1:0);}var pts=[],edge=[],x,y;for(y=0;y<H;y++){for(x=0;x<W;x++){if(solid(x,y)){pts.push(x,y);if(!solid(x-1,y)||!solid(x+1,y)||!solid(x,y-1)||!solid(x,y+1)){edge.push(x,y);}}}}var np=pts.length/2,ne=edge.length/2;if(np<50){return buildScatter();}var minx=1e9,maxx=-1e9,miny=1e9,maxy=-1e9,k;for(k=0;k<np;k++){var px=pts[k*2],py=pts[k*2+1];if(px<minx)minx=px;if(px>maxx)maxx=px;if(py<miny)miny=py;if(py>maxy)maxy=py;}var bw=(maxx-minx)||1,bh=(maxy-miny)||1,tH=1.95,tW=tH*bw/bh;function MX(qx){return ((qx-minx)/bw-0.5)*tW;}function MY(qy){return -((qy-miny)/bh-0.5)*tH;}var bumps=[],step=15,gx,gy;for(gy=miny+5;gy<maxy;gy+=step){for(gx=minx+5;gx<maxx;gx+=step){var jx=gx+(Math.random()-0.5)*6,jy=gy+(Math.random()-0.5)*6;if(solid(Math.round(jx),Math.round(jy))){bumps.push(jx,jy);}}}var nb=bumps.length/2,Ne=Math.round(N*0.42),i;for(i=0;i<N;i++){var qx,qy;if(i<Ne&&ne>0){var e=(Math.random()*ne)|0;qx=edge[e*2]+(Math.random()-0.5)*1.4;qy=edge[e*2+1]+(Math.random()-0.5)*1.4;}else if(nb>0){var bi2=(Math.random()*nb)|0,g1=Math.random(),g2=Math.random(),off=Math.min(5,Math.sqrt(-2*Math.log(g1||1e-6))*2.0),an=6.2832*g2;qx=bumps[bi2*2]+Math.cos(an)*off;qy=bumps[bi2*2+1]+Math.sin(an)*off;}else{var s=(Math.random()*np)|0;qx=pts[s*2];qy=pts[s*2+1];}a[i*3]=MX(qx);a[i*3+1]=MY(qy);a[i*3+2]=(seed[i]-0.5)*0.28;}return a;}
+function buildDog(){var a=new Float32Array(N*3),sc=SHP.dog.s,dp=SHP.dog.d,src=SH.dog,G=160;function grid(dil){var o=new Uint8Array(G*G),gi;for(gi=0;gi<src.length;gi++){var p=src[gi]||[0,0];var cx=Math.floor((p[0]+1)/2*G),cy=Math.floor((p[1]+1)/2*G);if(cx<0)cx=0;if(cx>=G)cx=G-1;if(cy<0)cy=0;if(cy>=G)cy=G-1;o[cy*G+cx]=1;}for(var d=0;d<dil;d++){var nb=o.slice(),gy,gx;for(gy=0;gy<G;gy++)for(gx=0;gx<G;gx++){if(o[gy*G+gx]){for(var dy=-1;dy<=1;dy++)for(var dx=-1;dx<=1;dx++){var nx=gx+dx,ny=gy+dy;if(nx>=0&&nx<G&&ny>=0&&ny<G)nb[ny*G+nx]=1;}}}o=nb;}return o;}var occ=grid(2),occT=grid(1);function get(x,y){return (x<0||y<0||x>=G||y>=G)?0:occ[y*G+x];}var start=null,ys,xs;for(ys=0;ys<G&&!start;ys++)for(xs=0;xs<G;xs++){if(get(xs,ys)){start=[xs,ys];break;}}var nbr=[[-1,-1],[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0]];var bnd=[];if(start){var cb=start.slice(),prev=[start[0]-1,start[1]];bnd.push(cb.slice());var sp=start.slice(),it=0,mx=G*G*8;do{var pdx=prev[0]-cb[0],pdy=prev[1]-cb[1],kk=0,nn;for(nn=0;nn<8;nn++){if(nbr[nn][0]===pdx&&nbr[nn][1]===pdy){kk=nn;break;}}var found=null,cc;for(cc=1;cc<=8;cc++){var nk=(kk+cc)%8,gx2=cb[0]+nbr[nk][0],gy2=cb[1]+nbr[nk][1];if(get(gx2,gy2)){found=[gx2,gy2];prev=[cb[0]+nbr[(nk+7)%8][0],cb[1]+nbr[(nk+7)%8][1]];break;}}if(!found)break;cb=found;bnd.push(cb.slice());it++;}while((cb[0]!==sp[0]||cb[1]!==sp[1])&&it<mx);}var pts=[],bi;for(bi=0;bi<bnd.length;bi++)pts.push([(bnd[bi][0]+0.5)/G*2-1,(bnd[bi][1]+0.5)/G*2-1]);DOGCOLLAR=new Uint8Array(N);DOGEDGE=new Uint8Array(N);var Kc=Math.max(80,Math.round(N*0.10)),Nb=Math.round(N*0.08),Ni=N-Kc-Nb;if(Nb<1||pts.length<2){return buildSil('dog');}var seg=[],tot=0,si;for(si=0;si<pts.length;si++){var q0=pts[si],q1=pts[(si+1)%pts.length];var dd=Math.sqrt((q1[0]-q0[0])*(q1[0]-q0[0])+(q1[1]-q0[1])*(q1[1]-q0[1]));seg.push(dd);tot+=dd;}var step=tot/Nb,jj=0,curl=0,kb;for(kb=0;kb<Nb;kb++){var tg=kb*step;while(jj<seg.length-1&&curl+seg[jj]<tg){curl+=seg[jj];jj++;}var r0=pts[jj],r1=pts[(jj+1)%pts.length],ff=seg[jj]>1e-9?(tg-curl)/seg[jj]:0;var ox=r0[0]+(r1[0]-r0[0])*ff,oy=r0[1]+(r1[1]-r0[1])*ff;a[kb*3]=ox*sc;a[kb*3+1]=oy*sc;a[kb*3+2]=(seed[kb]-0.5)*dp*0.12;DOGEDGE[kb]=1;}function inside(x,y){var cx=Math.floor((x+1)/2*G),cy=Math.floor((y+1)/2*G);return cx>=0&&cx<G&&cy>=0&&cy<G&&occT[cy*G+cx];}var fc=0,guard=0;while(fc<Ni&&guard<Ni*80){var fx=Math.random()*2-1,fy=Math.random()*2-1;if(inside(fx,fy)){var fi=Nb+fc;a[fi*3]=fx*sc;a[fi*3+1]=fy*sc;a[fi*3+2]=(seed[fi]-0.5)*dp*0.6;fc++;}guard++;}for(;fc<Ni;fc++){var fi2=Nb+fc;a[fi2*3]=0;a[fi2*3+1]=0;a[fi2*3+2]=0;}var cxL=0.22,cxR=0.66,cyc=0.46,tilt=-0.13,th=0.04,xm=(cxL+cxR)*0.5,hw=(cxR-cxL)*0.5,ci,ci3,cj;for(cj=0;cj<Kc;cj++){ci=N-1-cj;ci3=ci*3;var ctt=cj/(Kc-1);var cxx=cxL+(cxR-cxL)*ctt;var cmid=(cxx-xm)/hw;var cyb=cyc+tilt*cmid;var cyy=cyb+(Math.random()-0.5)*th;a[ci3]=cxx*sc;a[ci3+1]=cyy*sc;a[ci3+2]=(seed[ci]-0.5)*dp*0.25;DOGCOLLAR[ci]=1;DOGEDGE[ci]=0;}return a;}TARGETS.dog=buildDog();TARGETS.paw=buildSil('paw');TARGETS.tag=buildSil('tag');TARGETS.heart=buildSil('heart');TARGETS.scatter=buildScatter();TARGETS.network=buildNetwork();TARGETS.puppy=buildPuppy();TARGETS.cristiano=buildSil('cristiano');TARGETS.noseprint=buildNose();TARGETS.cat=buildCat();
 function reorder(a){var ord=[];for(var i=0;i<N;i++){var x=a[i*3],y=a[i*3+1];ord.push([Math.atan2(y,x),x*x+y*y,i]);}ord.sort(function(p,q){return (p[0]-q[0])||(p[1]-q[1]);});var b=new Float32Array(N*3);for(var k=0;k<N;k++){var s=ord[k][2]*3;b[k*3]=a[s];b[k*3+1]=a[s+1];b[k*3+2]=a[s+2];}return b;}
-TARGETS.dog=(function(){var a=TARGETS.dog;var ord=[];for(var i=0;i<N;i++){var x=a[i*3],y=a[i*3+1];ord.push([Math.atan2(y,x),x*x+y*y,i]);}ord.sort(function(p,q){return (p[0]-q[0])||(p[1]-q[1]);});var b=new Float32Array(N*3),m=new Uint8Array(N),e=new Uint8Array(N);for(var k=0;k<N;k++){var s=ord[k][2];b[k*3]=a[s*3];b[k*3+1]=a[s*3+1];b[k*3+2]=a[s*3+2];m[k]=DOGCOLLAR?DOGCOLLAR[s]:0;e[k]=DOGEDGE?DOGEDGE[s]:0;}DOGCOLLAR=m;DOGEDGE=e;DOGINT=new Float32Array(N);DOGINX=new Float32Array(N);DOGINY=new Float32Array(N);var cxm=0,cym=0;for(var p=0;p<N;p++){cxm+=b[p*3];cym+=b[p*3+1];}cxm/=N;cym/=N;for(var p2=0;p2<N;p2++){DOGINT[p2]=DOGEDGE[p2]?0:1;var dx=cxm-b[p2*3],dy=cym-b[p2*3+1],L=Math.sqrt(dx*dx+dy*dy);if(L>1e-4){DOGINX[p2]=dx/L;DOGINY[p2]=dy/L;}}return b;})();TARGETS.paw=reorder(TARGETS.paw);TARGETS.tag=reorder(TARGETS.tag);TARGETS.heart=reorder(TARGETS.heart);TARGETS.scatter=reorder(TARGETS.scatter);TARGETS.network=reorder(TARGETS.network);TARGETS.puppy=(function(){var a=TARGETS.puppy;var ord=[];for(var i=0;i<N;i++){var x=a[i*3],y=a[i*3+1];ord.push([Math.atan2(y,x),x*x+y*y,i]);}ord.sort(function(p,q){return (p[0]-q[0])||(p[1]-q[1]);});var b=new Float32Array(N*3),m=new Uint8Array(N),e=new Uint8Array(N),rc=new Float32Array(N*3);for(var k=0;k<N;k++){var s=ord[k][2];b[k*3]=a[s*3];b[k*3+1]=a[s*3+1];b[k*3+2]=a[s*3+2];m[k]=COLLAR?COLLAR[s]:0;e[k]=PUPEDGE?PUPEDGE[s]:0;if(m[k]){var cc=hsv2rgb(Math.random(),0.9,1.0);rc[k*3]=cc[0];rc[k*3+1]=cc[1];rc[k*3+2]=cc[2];}}COLLAR=m;PUPEDGE=e;COLLARRAND=rc;PUPINT=new Float32Array(N);PUPINX=new Float32Array(N);PUPINY=new Float32Array(N);var cxm=0,cym=0;for(var p=0;p<N;p++){cxm+=b[p*3];cym+=b[p*3+1];}cxm/=N;cym/=N;for(var p2=0;p2<N;p2++){PUPINT[p2]=PUPEDGE[p2]?0:1;var dx=cxm-b[p2*3],dy=cym-b[p2*3+1],L=Math.sqrt(dx*dx+dy*dy);if(L>1e-4){PUPINX[p2]=dx/L;PUPINY[p2]=dy/L;}}return b;})();TARGETS.cristiano=reorder(TARGETS.cristiano);TARGETS.cat=(function(){var a=TARGETS.cat;var ord=[];for(var i=0;i<N;i++){var x=a[i*3],y=a[i*3+1];ord.push([Math.atan2(y,x),x*x+y*y,i]);}ord.sort(function(p,q){return (p[0]-q[0])||(p[1]-q[1]);});var b=new Float32Array(N*3),e=new Uint8Array(N),cl=new Uint8Array(N);for(var k=0;k<N;k++){var s=ord[k][2];b[k*3]=a[s*3];b[k*3+1]=a[s*3+1];b[k*3+2]=a[s*3+2];e[k]=CATEDGE?CATEDGE[s]:0;cl[k]=CATCOLLAR?CATCOLLAR[s]:0;}CATEDGE=e;CATCOLLAR=cl;CATINT=new Float32Array(N);CATINX=new Float32Array(N);CATINY=new Float32Array(N);var cxm=0,cym=0;for(var p=0;p<N;p++){cxm+=b[p*3];cym+=b[p*3+1];}cxm/=N;cym/=N;for(var p2=0;p2<N;p2++){CATINT[p2]=(CATEDGE[p2]||CATCOLLAR[p2])?0:1;var dx=cxm-b[p2*3],dy=cym-b[p2*3+1],L=Math.sqrt(dx*dx+dy*dy);if(L>1e-4){CATINX[p2]=dx/L;CATINY[p2]=dy/L;}}return b;})();
+TARGETS.dog=(function(){var a=TARGETS.dog;var ord=[];for(var i=0;i<N;i++){var x=a[i*3],y=a[i*3+1];ord.push([Math.atan2(y,x),x*x+y*y,i]);}ord.sort(function(p,q){return (p[0]-q[0])||(p[1]-q[1]);});var b=new Float32Array(N*3),m=new Uint8Array(N),e=new Uint8Array(N);for(var k=0;k<N;k++){var s=ord[k][2];b[k*3]=a[s*3];b[k*3+1]=a[s*3+1];b[k*3+2]=a[s*3+2];m[k]=DOGCOLLAR?DOGCOLLAR[s]:0;e[k]=DOGEDGE?DOGEDGE[s]:0;}DOGCOLLAR=m;DOGEDGE=e;DOGINT=new Float32Array(N);DOGINX=new Float32Array(N);DOGINY=new Float32Array(N);var cxm=0,cym=0;for(var p=0;p<N;p++){cxm+=b[p*3];cym+=b[p*3+1];}cxm/=N;cym/=N;for(var p2=0;p2<N;p2++){DOGINT[p2]=DOGEDGE[p2]?0:1;var dx=cxm-b[p2*3],dy=cym-b[p2*3+1],L=Math.sqrt(dx*dx+dy*dy);if(L>1e-4){DOGINX[p2]=dx/L;DOGINY[p2]=dy/L;}}return b;})();TARGETS.paw=reorder(TARGETS.paw);TARGETS.tag=reorder(TARGETS.tag);TARGETS.heart=reorder(TARGETS.heart);TARGETS.scatter=reorder(TARGETS.scatter);TARGETS.network=reorder(TARGETS.network);TARGETS.puppy=(function(){var a=TARGETS.puppy;var ord=[];for(var i=0;i<N;i++){var x=a[i*3],y=a[i*3+1];ord.push([Math.atan2(y,x),x*x+y*y,i]);}ord.sort(function(p,q){return (p[0]-q[0])||(p[1]-q[1]);});var b=new Float32Array(N*3),m=new Uint8Array(N),e=new Uint8Array(N),rc=new Float32Array(N*3);for(var k=0;k<N;k++){var s=ord[k][2];b[k*3]=a[s*3];b[k*3+1]=a[s*3+1];b[k*3+2]=a[s*3+2];m[k]=COLLAR?COLLAR[s]:0;e[k]=PUPEDGE?PUPEDGE[s]:0;if(m[k]){var cc=hsv2rgb(Math.random(),0.9,1.0);rc[k*3]=cc[0];rc[k*3+1]=cc[1];rc[k*3+2]=cc[2];}}COLLAR=m;PUPEDGE=e;COLLARRAND=rc;PUPINT=new Float32Array(N);PUPINX=new Float32Array(N);PUPINY=new Float32Array(N);var cxm=0,cym=0;for(var p=0;p<N;p++){cxm+=b[p*3];cym+=b[p*3+1];}cxm/=N;cym/=N;for(var p2=0;p2<N;p2++){PUPINT[p2]=PUPEDGE[p2]?0:1;var dx=cxm-b[p2*3],dy=cym-b[p2*3+1],L=Math.sqrt(dx*dx+dy*dy);if(L>1e-4){PUPINX[p2]=dx/L;PUPINY[p2]=dy/L;}}return b;})();TARGETS.cristiano=reorder(TARGETS.cristiano);TARGETS.noseprint=reorder(TARGETS.noseprint);TARGETS.cat=(function(){var a=TARGETS.cat;var ord=[];for(var i=0;i<N;i++){var x=a[i*3],y=a[i*3+1];ord.push([Math.atan2(y,x),x*x+y*y,i]);}ord.sort(function(p,q){return (p[0]-q[0])||(p[1]-q[1]);});var b=new Float32Array(N*3),e=new Uint8Array(N),cl=new Uint8Array(N);for(var k=0;k<N;k++){var s=ord[k][2];b[k*3]=a[s*3];b[k*3+1]=a[s*3+1];b[k*3+2]=a[s*3+2];e[k]=CATEDGE?CATEDGE[s]:0;cl[k]=CATCOLLAR?CATCOLLAR[s]:0;}CATEDGE=e;CATCOLLAR=cl;CATINT=new Float32Array(N);CATINX=new Float32Array(N);CATINY=new Float32Array(N);var cxm=0,cym=0;for(var p=0;p<N;p++){cxm+=b[p*3];cym+=b[p*3+1];}cxm/=N;cym/=N;for(var p2=0;p2<N;p2++){CATINT[p2]=(CATEDGE[p2]||CATCOLLAR[p2])?0:1;var dx=cxm-b[p2*3],dy=cym-b[p2*3+1],L=Math.sqrt(dx*dx+dy*dy);if(L>1e-4){CATINX[p2]=dx/L;CATINY[p2]=dy/L;}}return b;})();
 
 var CH=[
  {shape:'dog',a:0xff6a2a,b:0xffd9a0,halo:0xff7a3f,acc:'#FF7A3F',bg:0},
  {shape:'cat',a:0x3ddc84,b:0xc9f7da,halo:0x4af0a6,acc:'#3DDC84',bg:6},
  {shape:'puppy',a:0x9bb7ff,b:0xe2ecff,halo:0xb8c9ff,acc:'#b7c9ff',bg:1,op:0.96},
- {shape:'tag',a:0xff6a24,b:0xffc061,halo:0xff9a3f,acc:'#FFB155',bg:2},
- {shape:'network',a:0x3fd2c7,b:0x7fe6ff,halo:0x3fd2c7,acc:'#5fe0d2',bg:3},
+ {shape:'tag',a:0x7c5cff,b:0x9bb7ff,halo:0x9a7bff,acc:'#b09aff',bg:0},
+ {shape:'noseprint',a:0x3fd2c7,b:0x7fe6ff,halo:0x5fe0d2,acc:'#5fe0d2',bg:3},
+ {shape:'network',a:0x5e9fe8,b:0x7fe6ff,halo:0x5e9fe8,acc:'#7fb4ff',bg:1},
  {shape:'heart',a:0xffce6b,b:0xff8a6b,halo:0xffb05a,acc:'#ffce6b',bg:4},
  {shape:'paw',a:0x9a7bff,b:0xff7a3f,halo:0x9a7bff,acc:'#b09aff',bg:5}
 ];
 var bgs=qsa('.bg');
-var VIEW=[{sc:1.02,px:0.68,py:0.03,cz:4.55},{sc:1.02,px:0.50,py:0.03,cz:4.55},{sc:0.82,px:-0.62,py:-0.03,cz:5.25},{sc:1.06,px:0.56,py:0.02,cz:4.35},{sc:1.78,px:0.06,py:-0.03,cz:6.15},{sc:0.9,px:0.14,py:-0.02,cz:5.05},{sc:1.02,px:0.62,py:0.04,cz:4.95}];
+var VIEW=[{sc:1.02,px:0.68,py:0.03,cz:4.55},{sc:1.02,px:0.50,py:0.03,cz:4.55},{sc:0.82,px:-0.62,py:-0.03,cz:5.25},{sc:1.06,px:0.56,py:0.02,cz:4.35},{sc:0.82,px:0.12,py:-0.02,cz:5.4},{sc:1.78,px:0.06,py:-0.03,cz:6.15},{sc:0.9,px:0.14,py:-0.02,cz:5.05},{sc:1.02,px:0.62,py:0.04,cz:4.95}];
 function setBg(i){bgs.forEach(function(el,k){el.classList.toggle('on',k===i);});}
 var railLinks=qsa('.chapter-rail a'),railProgress=qs('#chapterProgress');
 function updateRail(i,p){if(railProgress){railProgress.style.transform='scaleY('+Math.max(0,Math.min(1,p||0))+')';}railLinks.forEach(function(a,k){var on=k===i;a.classList.toggle('active',on);if(on){a.setAttribute('aria-current','true');}else{a.removeAttribute('aria-current');}});}
@@ -1753,13 +1841,13 @@ function setupScroll(){
  qsa('h1.huge,h2.big').forEach(function(h){h.classList.remove('fade');h.style.opacity='1';var wis=splitMask(h);gsap.set(wis,{yPercent:120});ScrollTrigger.create({trigger:h,start:'top 86%',once:true,onEnter:function(){gsap.to(wis,{yPercent:0,duration:1.0,stagger:0.055,ease:'power4.out'});}});});
  qsa('.lede').forEach(function(p){p.classList.remove('fade');gsap.set(p,{opacity:0,y:16});ScrollTrigger.create({trigger:p,start:'top 88%',once:true,onEnter:function(){gsap.to(p,{opacity:1,y:0,duration:.46,ease:'power3.out',clearProps:'willChange'});}});});
  ScrollTrigger.batch('.fade',{start:'top 85%',onEnter:function(els){gsap.to(els,{opacity:1,y:0,duration:.9,stagger:.08,ease:'power3.out'});}});
- qsa('section[data-chapter]').forEach(function(sec){var idx=parseInt(sec.getAttribute('data-chapter'),10);ScrollTrigger.create({trigger:sec,start:'top 55%',end:'bottom 45%',onEnter:function(){if(idx<=3)setChapter(idx);},onEnterBack:function(){if(idx<=3)setChapter(idx);}});});
+ qsa('section[data-chapter]').forEach(function(sec){var idx=parseInt(sec.getAttribute('data-chapter'),10);ScrollTrigger.create({trigger:sec,start:'top 55%',end:'bottom 45%',onEnter:function(){if(idx<=4)setChapter(idx);},onEnterBack:function(){if(idx<=4)setChapter(idx);}});});
  function computeStops(){var secs=qsa('section[data-chapter]');var maxS=Math.max(1,document.documentElement.scrollHeight-innerHeight);var seen={};STOPS=[];for(var c=0;c<CH.length;c++){STOPS[c]=c/(CH.length-1);}secs.forEach(function(sec){var cc=parseInt(sec.getAttribute('data-chapter'),10);if(seen[cc]===undefined){seen[cc]=Math.max(0,Math.min(1,sec.offsetTop/maxS));}});for(var c2=0;c2<CH.length;c2++){if(seen[c2]!==undefined){STOPS[c2]=seen[c2];}}}
  var MORPH_DELAY=0.1;
  function delayedProgress(p){if(!STOPS)return p;var last=CH.length-1;if(p<=STOPS[0])return STOPS[0];for(var c=0;c<last;c++){if(p>=STOPS[c]&&p<STOPS[c+1]){var a=STOPS[c],b=STOPS[c+1],d=Math.max(0.0001,b-a),hold=Math.min(d*0.42,MORPH_DELAY);if(p<a+hold)return a;var q=(p-a-hold)/(d-hold);return a+Math.max(0,Math.min(1,q))*d;}}return p;}
  function chapFromScroll(p){if(!STOPS)return 0;p=delayedProgress(p);var last=CH.length-1;if(p<=STOPS[0])return 0;if(p>=STOPS[last])return last;for(var c=0;c<last;c++){if(p>=STOPS[c]&&p<STOPS[c+1]){var d=STOPS[c+1]-STOPS[c];return c+(d>0.0001?(p-STOPS[c])/d:0);}}return last;}
  computeStops();ScrollTrigger.addEventListener('refresh',computeStops);
- ScrollTrigger.create({trigger:'main',start:'top top',end:'bottom bottom',scrub:true,onUpdate:function(self){var p=self.progress;scrollProg=p;var mt;if(STOPS){var lag=(innerHeight*0.34)/Math.max(1,document.documentElement.scrollHeight-innerHeight);if(p>=STOPS[3]){mt=chapFromScroll(p-lag);if(mt<3)mt=3;}else{mt=chapFromScroll(p);}}else{mt=chapFromScroll(p);}mTarget=mt;var ci=Math.round(mt);if(ci>=4){setChapter(ci);}updateRail(Math.round(mt),self.progress);}});
+ ScrollTrigger.create({trigger:'main',start:'top top',end:'bottom bottom',scrub:true,onUpdate:function(self){var p=self.progress;scrollProg=p;var mt;if(STOPS){var lag=(innerHeight*0.34)/Math.max(1,document.documentElement.scrollHeight-innerHeight);if(p>=STOPS[3]){mt=chapFromScroll(p-lag);if(mt<3)mt=3;}else{mt=chapFromScroll(p);}}else{mt=chapFromScroll(p);}mTarget=mt;var ci=Math.round(mt);if(ci>=5){setChapter(ci);}updateRail(Math.round(mt),self.progress);}});
  qsa('[data-count]').forEach(function(el){var to=parseFloat(el.getAttribute('data-count')),suf=el.getAttribute('data-suffix')||'',o={v:0};ScrollTrigger.create({trigger:el,start:'top 85%',once:true,onEnter:function(){gsap.to(o,{v:to,duration:1.6,ease:'power2.out',onUpdate:function(){el.textContent=Math.round(o.v)+suf;}});}});});
  bindAnchors();
  var cc=qs('#curr');qsa('a,.btn,[data-h],.card').forEach(function(el){el.addEventListener('mouseenter',function(){if(cc)cc.classList.add('big');});el.addEventListener('mouseleave',function(){if(cc)cc.classList.remove('big');});});
@@ -1796,6 +1884,7 @@ function reveal(){if(pre)pre.classList.add('done');setupScroll();setChapter(0);}
 function glNote(msg){try{if(document.getElementById('glnote'))return;var n=document.createElement('div');n.id='glnote';n.textContent=msg;n.style.cssText='position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:99;background:rgba(20,16,30,.92);color:#f3ecdd;font:500 12px/1.45 system-ui,sans-serif;padding:9px 15px;border-radius:999px;border:1px solid rgba(243,236,221,.22);max-width:90vw;text-align:center;pointer-events:none';document.body.appendChild(n);}catch(_){}}
 function boot(){if(started)return;started=true;if(hasThree){try{init3D();}catch(e){console.error(e);var g0=qs('#gl');if(g0){g0.style.display='none';}glNote('3D could not start on this device: '+((e&&e.message)?e.message:'WebGL error'));}}else{var gl=qs('#gl');if(gl){gl.style.display='none';}glNote((typeof THREE==='undefined')?'3D library failed to load — check your internet connection and reload.':'3D is unavailable on this device.');}if(hasGsap){var o={v:0};gsap.to(o,{v:100,duration:1.5,ease:'power2.inOut',onUpdate:function(){var rv=Math.round(o.v);if(preNum)preNum.textContent=rv;if(preBar)preBar.style.width=o.v+'%';var cap=qs('#preCap');if(cap){cap.textContent=rv<34?'Mapping animal identities…':rv<67?'Assembling the Living ID…':rv<99?'Connecting the Pet OS…':'Identity first. Ecosystem second.';}},onComplete:reveal});}else{if(preNum)preNum.textContent=100;reveal();}}
 if(document.readyState==='complete'){boot();}else{addEventListener('load',boot);}
+(function(){var view=document.getElementById('scanView');if(!view)return;var video=document.getElementById('scanVideo'),cv=document.getElementById('scanCanvas'),ctx=cv.getContext('2d');var status=document.getElementById('scanStatus'),chips=[].slice.call(document.querySelectorAll('#scanChips .qc'));var enableBtn=document.getElementById('scanEnable'),capBtn=document.getElementById('scanCapture');var countEl=document.getElementById('scanCount'),dots=[].slice.call(document.querySelectorAll('.scan-dots .d3'));var resWrap=document.getElementById('scanResult'),ring=document.getElementById('scanRing'),ringT=document.getElementById('scanRingT'),rT=document.getElementById('scanRT'),rS=document.getElementById('scanRS');var enrolled=0,live=false,quality=0,t0=performance.now();function fit(){var r=view.getBoundingClientRect();var dpr=Math.min(2,window.devicePixelRatio||1);cv.width=Math.max(2,r.width*dpr);cv.height=Math.max(2,r.height*dpr);}addEventListener('resize',fit);fit();function setChips(q){chips.forEach(function(c,i){c.classList.toggle('ok',q>(i+1)/chips.length-0.14);});}function draw(now){var w=cv.width,h=cv.height,tt=(now-t0)/1000;ctx.clearRect(0,0,w,h);var tgt=live?0.96:0.55+0.22*Math.sin(tt*1.2);quality+=(tgt-quality)*0.04;setChips(quality);var cx=w/2+Math.sin(tt*0.7)*w*0.03,cy=h*0.5+Math.cos(tt*0.9)*h*0.03,rw=w*0.30,rh=h*0.30*(1+0.02*Math.sin(tt*2.4));var col=live?'rgba(95,224,210,':'rgba(154,123,255,';ctx.lineWidth=Math.max(2,w*0.006);ctx.strokeStyle=col+(0.35+quality*0.5)+')';var bx=cx-rw,by=cy-rh,ex=cx+rw,ey=cy+rh,L=Math.min(rw,rh)*0.5;[[bx,by,1,1],[ex,by,-1,1],[bx,ey,1,-1],[ex,ey,-1,-1]].forEach(function(p){ctx.beginPath();ctx.moveTo(p[0],p[1]+p[3]*L);ctx.lineTo(p[0],p[1]);ctx.lineTo(p[0]+p[2]*L,p[1]);ctx.stroke();});ctx.beginPath();ctx.ellipse(cx,cy,rw*0.62,rh*0.72,0,0,6.2832);ctx.strokeStyle=col+(0.2+quality*0.4)+')';ctx.lineWidth=Math.max(1.5,w*0.004);ctx.stroke();ctx.fillStyle=col+(0.5*quality)+')';for(var i=0;i<42;i++){var a=i*2.399963,rr=Math.sqrt(i/42)*rw*0.5;ctx.beginPath();ctx.arc(cx+Math.cos(a+tt*0.5)*rr,cy+Math.sin(a+tt*0.5)*rr*0.9,Math.max(1,w*0.004),0,6.2832);ctx.fill();}var sy=by+((tt*0.5)%1)*(ey-by),g=ctx.createLinearGradient(0,sy-14,0,sy+14);g.addColorStop(0,col+'0)');g.addColorStop(.5,col+(0.55*quality)+')');g.addColorStop(1,col+'0)');ctx.fillStyle=g;ctx.fillRect(bx,sy-14,ex-bx,28);requestAnimationFrame(draw);}requestAnimationFrame(draw);enableBtn.addEventListener('click',function(){if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){status.textContent='Camera not available here — the guided overlay still shows the capture flow.';return;}status.textContent='Requesting camera…';navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(s){video.srcObject=s;video.play();view.classList.add('live');live=true;enableBtn.disabled=true;enableBtn.textContent='Camera on';status.textContent='Frame the muzzle inside the guide, then capture.';}).catch(function(){status.textContent='Camera blocked — showing the guided demo instead.';});});function ringTo(p){ring.style.setProperty('--p',p);ringT.textContent=Math.round(p)+'%';}capBtn.addEventListener('click',function(){resWrap.hidden=false;if(enrolled<3){enrolled++;countEl.textContent=enrolled;if(dots[enrolled-1])dots[enrolled-1].classList.add('on');ringTo(enrolled/3*100);if(enrolled<3){rT.textContent='Sample '+enrolled+' of 3 captured';rS.textContent='Rotate slightly and capture again for a robust signature.';status.textContent='Good capture — '+(3-enrolled)+' more to enroll.';}else{rT.textContent='Nose-print enrolled ✓';rS.textContent='Signature NP-4F2A stored against Cristiano’s Living ID.';status.textContent='Enrolled. Try Capture again to run a 1:N match.';capBtn.textContent='Run match scan';}}else{ringTo(98.6);rT.textContent='Match found · Cristiano';rS.textContent='PWL-IN-0001 · 98.6% confidence · Verified · Navrangpura.';status.textContent='Identity confirmed from the nose print alone.';}});})();
 setTimeout(boot,2600);
 })();
 </script>
