@@ -24,7 +24,7 @@
     }
     return p;
   }
-​
+
   var panes = { search:"pane-search", photo:"pane-photo", lost:"pane-lost" };
   document.querySelectorAll(".tab").forEach(function(t){
     t.onclick=function(){
@@ -34,7 +34,7 @@
       if(t.dataset.t==="lost") loadLost();
     };
   });
-​
+
   function petCard(pt, extra){
     var ph = photoUrl(pt.photo_path);
     var phStyle = ph ? ('style="background-image:url(\''+esc(ph)+'\')"') : "";
@@ -50,12 +50,13 @@
       + '<div style="margin-top:8px;display:flex;gap:6px;align-items:center">'+chip+(extra||"")+'</div>'
       + '</div></div>';
   }
+  function confBand(p){ p=Number(p)||0; if(p>=50) return {word:"Strong match",color:"#0a8a54"}; if(p>=35) return {word:"Likely match",color:"#0a8a54"}; if(p>=20) return {word:"Possible match",color:"#b8860b"}; return {word:"Weak match",color:"#c0392b"}; }
   function wire(container, pets){
     container.querySelectorAll(".pet").forEach(function(el){
       el.onclick=function(){ var pt=pets.filter(function(p){return String(p.id)===el.dataset.id;})[0]; if(pt) openCard(pt); };
     });
   }
-​
+
   var qEl=document.getElementById("q"), out=document.getElementById("searchOut"), hint=document.getElementById("searchHint");
   function doSearch(){
     var q=(qEl.value||"").trim();
@@ -77,14 +78,14 @@
   qEl.addEventListener("keydown",function(e){ if(e.key==="Enter") doSearch(); });
   var usp=new URLSearchParams(location.search);
   if(usp.get("q")){ qEl.value=usp.get("q"); doSearch(); }
-​
+
   var drop=document.getElementById("drop"), file=document.getElementById("file"), pout=document.getElementById("photoOut"), dropTxt=document.getElementById("dropTxt");
   drop.addEventListener("click",function(){ file.click(); });
   drop.addEventListener("dragover",function(e){ e.preventDefault(); drop.classList.add("drag"); });
   drop.addEventListener("dragleave",function(){ drop.classList.remove("drag"); });
   drop.addEventListener("drop",function(e){ e.preventDefault(); drop.classList.remove("drag"); if(e.dataTransfer.files[0]) identify(e.dataTransfer.files[0]); });
   file.addEventListener("change",function(){ if(file.files[0]) identify(file.files[0]); });
-​
+
   function identify(f){
     dropTxt.innerHTML='<span class="spinner"></span> Identifying\u2026';
     pout.innerHTML="";
@@ -118,7 +119,7 @@
       return { key:key!=null?String(key):null, photo_path:path!=null?String(path):null, score:sc };
     }).filter(function(m){ return m.key || m.photo_path; }).slice(0,12);
   }
-​
+
   var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   function inList(col, vals){
     if(!vals.length) return null;
@@ -151,15 +152,17 @@
           pout.innerHTML='<div class="empty">We found a visual match'+(seen?' (<b>'+esc(seen)+'</b>)':'')+', but that dog isn\u2019t in the public database yet.</div>';
           return;
         }
-        pout.innerHTML=rows.map(function(p){
+        var _top=rows[0]&&rows[0].__score!=null?(rows[0].__score>1?Math.round(rows[0].__score):Math.round(rows[0].__score*100)):0;
+        var warn=_top<35?'<div class="empty" style="margin-bottom:8px">⚠️ No confident match — these are the closest look-alikes. Verify with the nose print or details before trusting.</div>':'';
+        pout.innerHTML=warn+rows.map(function(p,i){
           var pct = p.__score!=null ? (p.__score>1?Math.round(p.__score):Math.round(p.__score*100)) : null;
-          var sc = pct!=null ? '<span class="score">'+pct+'% match</span>' : "";
+          var sc = ""; if(pct!=null){ var b=confBand(pct); sc=(i===0?'<span class="score" style="background:#0a8a54;color:#fff">✅ Top match</span> ':'')+'<span class="score" style="color:'+b.color+'">'+b.word+' · '+pct+'% similarity</span>'; }
           return petCard(p, sc);
         }).join("");
         wire(pout, rows);
       });
   }
-​
+
   var lostOut=document.getElementById("lostOut"), lostHint=document.getElementById("lostHint"), lq=document.getElementById("lq");
   var LOST=[]; var myLoc=null;
   var LOST_FILTER="is_lost.eq.true,metadata->>isLost.eq.true";
@@ -204,7 +207,7 @@
     }catch(e){}
   }
   function loadLostQuiet(){ lostAttempt(SAFE).then(function(r){ if(r.error){ return lostAttempt(SAFE_MIN); } return r; }).then(function(r){ LOST=(r.data||[]).map(normLost).filter(function(p){return p.is_lost;}); LOST.sort(function(a,b){ return new Date(b.lost_since||0)-new Date(a.lost_since||0); }); renderLost(); }); }
-​
+
   var ov=document.getElementById("ov"), idcard=document.getElementById("idcard"), curPt=null, detailsBox=null;
   function ensureDetailsBox(){
     if(detailsBox) return detailsBox;
@@ -322,4 +325,3 @@
     else if(navigator.clipboard){ navigator.clipboard.writeText(text); document.getElementById("ovShare").textContent="\u2705 Copied"; setTimeout(function(){document.getElementById("ovShare").innerHTML="\ud83d\udce4 Share";},1400); }
   };
 })();
-​
