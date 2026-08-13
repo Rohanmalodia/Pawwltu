@@ -13,7 +13,7 @@ window.KYPWEB = {
 
   // Public base for shareable card links (must match the app's PETPASS_CARD_BASE).
   // GitHub Pages uses the static card page at /d/, so use the ?c= form:
-  CARD_BASE: "https://www.pawwltu.com/d/?c=",
+  CARD_BASE: "https://www.pawwltu.com/find/d/?c=",
 
   // Storage bucket that holds pet photos (public bucket)
   BUCKET: "pet-media"
