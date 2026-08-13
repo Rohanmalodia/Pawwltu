@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Pawwltu · Know Your Pet</title>
+<meta name="description" content="Search and identify dogs by ID or photo. See lost dogs near you."/>
+<meta property="og:title" content="Pawwltu · Know Your Pet"/>
+<meta property="og:description" content="Search and identify dogs by ID or photo. See lost dogs near you."/>
+<meta property="og:type" content="website"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%BE%3C/text%3E%3C/svg%3E"/>
+<style>
+:root{--brand:#5B5BF0;--brand2:#8B5CF6;--accent:#FF7A59;--green:#12B886;--red:#F0544F;--canvas:#F5F6FB;--ink:#141420;--mut:#6B7192}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--canvas);color:var(--ink)}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:0 18px}
+header.top{position:sticky;top:0;z-index:20;background:rgba(245,246,251,.86);backdrop-filter:blur(10px);border-bottom:1px solid #e7e8f2}
+.topin{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-weight:800;font-size:18px;display:flex;align-items:center;gap:8px}
+.logo small{font-weight:600;color:var(--mut);font-size:12px}
+.hero{background:linear-gradient(135deg,#5B5BF0,#8B5CF6 55%,#FF7A59 135%);color:#fff;padding:40px 0 46px;border-radius:0 0 26px 26px}
+.hero h1{margin:0 0 8px;font-size:30px;letter-spacing:-.5px}
+.hero p{margin:0;opacity:.94;font-size:15px}
+.card{background:#fff;border:1px solid #ecedf6;border-radius:18px;box-shadow:0 8px 26px rgba(30,30,80,.06)}
+.searchbar{margin-top:22px;display:flex;gap:10px;background:#fff;border-radius:16px;padding:8px;box-shadow:0 12px 34px rgba(20,20,60,.16)}
+.searchbar input{flex:1;border:none;outline:none;font-size:16px;padding:12px 14px;border-radius:12px;background:#f4f5fb}
+.btn{border:none;border-radius:12px;padding:12px 18px;font-weight:700;font-size:14px;cursor:pointer;background:var(--brand);color:#fff;transition:.15s}
+.btn:hover{filter:brightness(1.05)}
+.btn.ghost{background:#eef0f9;color:var(--ink)}
+.btn.sm{padding:8px 12px;font-size:13px}
+.tabs{display:flex;gap:8px;margin:18px 0}
+.tab{padding:9px 15px;border-radius:999px;background:#eceef8;color:var(--mut);font-weight:700;font-size:14px;cursor:pointer}
+.tab.active{background:var(--brand);color:#fff}
+.sec{margin:22px 0}
+.sec h2{font-size:19px;margin:0 0 4px}
+.sec .muted{color:var(--mut);font-size:14px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.pet{background:#fff;border:1px solid #ecedf6;border-radius:16px;overflow:hidden;cursor:pointer;transition:.15s}
+.pet:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(20,20,60,.12)}
+.pet .ph{height:150px;background:#eef0f9 center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:54px;position:relative}
+.pet .bd{padding:12px 13px}
+.pet .nm{font-weight:800;font-size:16px;display:flex;align-items:center;gap:6px}
+.pet .mt{color:var(--mut);font-size:13px;margin-top:2px}
+.pet .code{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--brand);font-weight:700;margin-top:6px}
+.pill{display:inline-block;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;background:#eef0f9;color:var(--mut)}
+.pill.green{background:#e5f8f1;color:#0c7a58}
+.pill.red{background:#fdece9;color:#b42318}
+.ribbon{position:absolute;top:10px;left:-30px;transform:rotate(-45deg);background:var(--red);color:#fff;font-weight:800;font-size:11px;padding:4px 34px;z-index:2}
+.badge-nose{position:absolute;top:8px;right:8px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px}
+.badge-nose.y{background:var(--green);color:#fff}
+.badge-nose.n{background:rgba(0,0,0,.5);color:#fff}
+.empty{color:var(--mut);text-align:center;padding:40px 10px}
+.drop{border:2px dashed #c9cbe6;border-radius:16px;padding:26px;text-align:center;color:var(--mut);background:#fff;cursor:pointer;display:block}
+.drop.drag{border-color:var(--brand);background:#f3f3ff}
+.spinner{width:22px;height:22px;border:3px solid #dfe1f0;border-top-color:var(--brand);border-radius:50%;animation:sp 1s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+.score{font-size:12px;font-weight:800;color:var(--green)}
+.ov{position:fixed;inset:0;z-index:100;background:rgba(8,8,18,.74);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:22px}
+.ov.show{display:flex}
+.idcard-wrap{perspective:1300px;width:min(360px,86vw)}
+.idcard{position:relative;transform:rotateX(7deg) rotateY(-9deg);border-radius:22px;overflow:hidden;box-shadow:0 34px 70px rgba(0,0,0,.55);background:linear-gradient(135deg,#5B5BF0,#8B5CF6 55%,#FF7A59 130%);color:#fff}
+.idcard .hd{padding:16px 18px 0;display:flex;justify-content:space-between;align-items:center}
+.idcard .hd b{font-size:14px;letter-spacing:.5px}
+.idcard .ph{margin:14px 16px 0;border-radius:16px;overflow:hidden;height:196px;background:#00000022 center/cover no-repeat;position:relative;display:flex;align-items:center;justify-content:center;font-size:72px}
+.idcard .ph .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(0,0,0,.6))}
+.idcard .ph .nm{position:absolute;left:14px;bottom:11px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+.idcard .ph .nm b{font-size:23px;font-weight:800}
+.idcard .ft{padding:14px 18px 16px;display:flex;justify-content:space-between;align-items:flex-end}
+.idcard .ft .id{font-family:ui-monospace,Menlo,monospace;font-size:19px;font-weight:800}
+.idcard .bar{height:8px;background:linear-gradient(90deg,#FF7A59,#8B5CF6,#5B5BF0)}
+.idcard .gloss{position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(160deg,rgba(255,255,255,.22),transparent);pointer-events:none}
+.ovbtns{display:flex;gap:10px;width:min(360px,86vw)}
+footer{color:var(--mut);text-align:center;padding:30px 0 40px;font-size:13px}
+@media(max-width:520px){.hero h1{font-size:24px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap topin">
+  <div class="logo">🐾 Pawwltu <small>Know Your Pet</small></div>
+  <a class="btn ghost sm" href="#lost">Lost dogs</a>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <h1>Find & identify any registered dog</h1>
+  <p>Search by ID or number, or detect a dog from a photo. Registration happens in the app.</p>
+  <div class="searchbar">
+    <input id="q" placeholder="Enter ID / number / name  (e.g. PWL-PD-0012)" autocomplete="off"/>
+    <button class="btn" id="go">Search</button>
+  </div>
+</div></section>
+
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab active" data-t="search">🔍 By ID / number</div>
+    <div class="tab" data-t="photo">📷 By photo</div>
+    <div class="tab" data-t="lost">🚨 Lost dogs</div>
+  </div>
+
+  <div class="sec" id="pane-search">
+    <div id="searchOut" class="grid"></div>
+    <div id="searchHint" class="empty">Type an ID, number, or name above and hit Search.</div>
+  </div>
+
+  <div class="sec" id="pane-photo" style="display:none">
+    <h2>Detect a dog from a photo</h2>
+    <p class="muted">Upload a clear photo of the dog's face. We’ll match it against registered dogs.</p>
+    <label class="drop" id="drop">
+      <input type="file" id="file" accept="image/*" hidden/>
+      <div id="dropTxt">📸 Tap to choose a photo (or drag & drop)</div>
+    </label>
+    <div id="photoOut" class="grid" style="margin-top:16px"></div>
+  </div>
+
+  <div class="sec" id="pane-lost" style="display:none">
+    <h2 id="lost">🚨 Lost dogs</h2>
+    <p class="muted">Reported lost by their owners. If you’ve seen one, contact the owner.</p>
+    <div class="searchbar" style="box-shadow:none;background:transparent;padding:0;margin:0 0 14px">
+      <input id="lq" placeholder="Filter by area / ward" style="background:#fff;border:1px solid #ecedf6"/>
+      <button class="btn ghost" id="near">📍 Near me</button>
+    </div>
+    <div id="lostOut" class="grid"></div>
+    <div id="lostHint" class="empty">Loading…</div>
+  </div>
+</div>
+
+<footer>🐾 Pawwltu · Know Your Pet — Registration & profiles are managed in the app.</footer>
+
+<div class="ov" id="ov"><div class="idcard-wrap"><div class="idcard" id="idcard"></div></div>
+  <div class="ovbtns">
+    <button class="btn" id="ovShare" style="flex:1">📤 Share</button>
+    <button class="btn ghost" id="ovClose" style="background:#fff">Close</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="site.js"></script>
+</body>
+</html>

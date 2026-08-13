@@ -10,6 +10,7 @@
   function code(pt){ return pt.public_code || pt.biometric_id || "Pending"; }
   function cap(s){ return s?(String(s).charAt(0).toUpperCase()+String(s).slice(1)):s; }
   function fmtDate(s){ try{ return new Date(s).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});}catch(e){return "";} }
+  function cardLink(pt){ try{ return new URL("d/?c="+encodeURIComponent(code(pt)), location.href).href; }catch(e){ return (C.CARD_BASE||"")+encodeURIComponent(code(pt)); } }
 
   var panes = { search:"pane-search", photo:"pane-photo", lost:"pane-lost" };
   document.querySelectorAll(".tab").forEach(function(t){
@@ -190,7 +191,7 @@
     if(detailsBox) return detailsBox;
     detailsBox=document.createElement("div");
     detailsBox.id="petDetails";
-    detailsBox.style.cssText="width:min(360px,86vw);background:#fff;border-radius:16px;max-height:40vh;overflow:auto;box-shadow:0 14px 34px rgba(0,0,0,.28)";
+    detailsBox.style.cssText="width:min(360px,86vw);background:#fff;border-radius:16px;max-height:44vh;overflow:auto;box-shadow:0 14px 34px rgba(0,0,0,.28)";
     var btns=ov.querySelector(".ovbtns");
     ov.insertBefore(detailsBox, btns);
     return detailsBox;
@@ -211,8 +212,26 @@
       h+=drow("Note", pt.lost_note);
       if(pt.owner_phone) h+='<div style="padding:11px 14px"><a class="pill red" style="text-decoration:none;font-size:13px;padding:8px 14px" href="tel:'+esc(pt.owner_phone)+'">\ud83d\udcde Call owner</a></div>';
     }
-    box.innerHTML='<div style="padding:11px 14px 4px;font-weight:800;font-size:13px">Details</div>'+h+'<div id="detailsExtra"></div>';
+    box.innerHTML='<div style="padding:11px 14px 4px;font-weight:800;font-size:13px">Details</div>'+h+'<div id="petPhotos"></div><div id="detailsExtra"></div>';
+    loadPhotos(pt);
     loadExtra(pt);
+  }
+  function loadPhotos(pt){
+    sb.from("pet_embeddings").select("photo_path,angle").eq("pet_id", pt.id).then(function(r){
+      var box=document.getElementById("petPhotos"); if(!box) return;
+      if(r.error){ console.warn("[photos] pet_embeddings read failed:", r.error.message||r.error); return; }
+      var seen={}, list=[];
+      if(pt.photo_path){ seen[pt.photo_path]=1; list.push({path:pt.photo_path,angle:""}); }
+      (r.data||[]).forEach(function(x){ if(x.photo_path && !seen[x.photo_path]){ seen[x.photo_path]=1; list.push({path:x.photo_path,angle:x.angle||""}); } });
+      if(list.length<2){ return; }
+      box.innerHTML='<div style="padding:11px 14px 4px;font-weight:800;font-size:13px">All photos ('+list.length+')</div>'
+        + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px 12px 12px">'
+        + list.map(function(p){ var u=photoUrl(p.path); return '<div class="gthumb" data-u="'+esc(u)+'" style="position:relative;cursor:pointer"><img src="'+esc(u)+'" alt="" loading="lazy" style="width:100%;height:76px;object-fit:cover;border-radius:8px;display:block"/>'+(p.angle?'<span style="position:absolute;left:5px;bottom:5px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:6px">'+esc(p.angle)+'</span>':'')+'</div>'; }).join("")
+        + '</div>';
+      box.querySelectorAll(".gthumb").forEach(function(el){
+        el.onclick=function(){ var ph=idcard.querySelector(".ph"); if(ph){ ph.style.backgroundImage="url('"+el.dataset.u+"')"; ph.style.fontSize="0"; } };
+      });
+    });
   }
   function loadExtra(pt){
     var table = pt.is_street ? "street_profiles" : "owned_profiles";
@@ -230,7 +249,7 @@
         h+=drow("Rabies date", d.rabies_date?fmtDate(d.rabies_date):null);
         h+=drow("Dewormed", yn(d.dewormed));
       }
-      if(h) box.innerHTML=h;
+      if(h) box.innerHTML='<div style="border-top:6px solid #f4f5fb"></div>'+h;
     });
   }
   function openCard(pt){
@@ -258,7 +277,7 @@
   window.addEventListener("popstate",function(){ if(ov.classList.contains("show")) closeCard(); });
   document.getElementById("ovShare").onclick=function(){
     if(!curPt) return;
-    var url=(C.CARD_BASE||"")+encodeURIComponent(code(curPt));
+    var url=cardLink(curPt);
     var text=(curPt.name||"This dog")+" \u00b7 KYP ID "+code(curPt)+(curPt.is_lost?" \u2014 REPORTED LOST":"")+"\n"+url;
     if(navigator.share){ navigator.share({title:"KYP Pet ID",text:text,url:url}); }
     else if(navigator.clipboard){ navigator.clipboard.writeText(text); document.getElementById("ovShare").textContent="\u2705 Copied"; setTimeout(function(){document.getElementById("ovShare").innerHTML="\ud83d\udce4 Share";},1400); }
