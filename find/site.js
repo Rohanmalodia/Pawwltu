@@ -1,3 +1,4 @@
+/* Pawwltu website logic */
 (function () {
   var C = window.KYPWEB || {};
   var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
@@ -277,11 +278,11 @@
         h+=drow("NGO", d.ngo_name);
         h+=drow("Caretaker", d.caretaker_phone);
         h+=drow("Colony", d.colony_area);
-        h+=drow("Sterilized", yn(d.sterilized));
+        h+=drow("Sterilized", yn(d.sterilized)||"Not recorded");
         h+=drow("Ear notch", yn(d.ear_notch));
-        h+=drow("Rabies vaccinated", yn(d.rabies_vaccinated));
+        h+=drow("Rabies vaccinated", yn(d.rabies_vaccinated)||"Not recorded");
         h+=drow("Rabies date", d.rabies_date?fmtDate(d.rabies_date):null);
-        h+=drow("Dewormed", yn(d.dewormed));
+        h+=drow("Dewormed", yn(d.dewormed)||"Not recorded");
       } else {
         h+=drow("Sex", d.sex);
         h+=drow("Date of birth", d.dob?fmtDate(d.dob):null);
@@ -321,3 +322,4 @@
     else if(navigator.clipboard){ navigator.clipboard.writeText(text); document.getElementById("ovShare").textContent="\u2705 Copied"; setTimeout(function(){document.getElementById("ovShare").innerHTML="\ud83d\udce4 Share";},1400); }
   };
 })();
+​
