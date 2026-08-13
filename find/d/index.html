@@ -62,8 +62,8 @@ body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:ce
   function miss(){ root.innerHTML='<div class="miss">\ud83d\udc3e This ID (<b>'+esc(code||"\u2014")+'</b>) could not be found.<br><br><a class="lk" href="../">Go to Pawwltu</a></div>'; }
   if(!code){ console.error("[card] no code in URL"); miss(); return; }
   if(!C.SUPABASE_URL || /YOUR-PROJECT/.test(C.SUPABASE_URL)){ console.error("[card] config.js not loaded or not filled (SUPABASE_URL missing)"); miss(); return; }
-  var FULL="id,name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since,lost_note,created_at";
-  var MIN="id,name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since";
+  var FULL="id,name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since,lost_note,created_at,metadata";
+  var MIN="id,name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since,metadata";
   function q(cols){ return C.SUPABASE_URL+"/rest/v1/pets?select="+cols+"&or=(public_code.eq."+encodeURIComponent(code)+",biometric_id.eq."+encodeURIComponent(code)+")&limit=1"; }
   function run(cols, isRetry){
     fetch(q(cols),{headers:hdr()})
@@ -83,23 +83,23 @@ body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:ce
   }
   function loadPhotos(pt){
     if(!pt.id) return;
-    fetch(C.SUPABASE_URL+"/rest/v1/pet_embeddings?select=photo_path,angle&pet_id=eq."+encodeURIComponent(pt.id),{headers:hdr()})
-      .then(function(r){ return r.ok?r.json():[]; })
-      .then(function(rows){
-        var seen={}, list=[];
-        if(pt.photo_path){ seen[pt.photo_path]=1; list.push({path:pt.photo_path,angle:""}); }
-        if(Array.isArray(rows)) rows.forEach(function(x){ if(x.photo_path && !seen[x.photo_path]){ seen[x.photo_path]=1; list.push({path:x.photo_path,angle:x.angle||""}); } });
-        if(list.length<2) return;
-        var g=document.getElementById("gal"); if(!g) return;
-        g.innerHTML='<div class="t">All photos ('+list.length+')</div><div class="gal">'
-          + list.map(function(p){ var u=photoUrl(p.path); return '<div class="gthumb" data-u="'+esc(u)+'"><img src="'+esc(u)+'" alt="" loading="lazy"/>'+(p.angle?'<span>'+esc(p.angle)+'</span>':'')+'</div>'; }).join("")
-          + '</div>';
-        g.querySelectorAll(".gthumb").forEach(function(el){ el.onclick=function(){ var ph=document.querySelector(".card .ph"); if(ph){ ph.style.backgroundImage="url('"+el.dataset.u+"')"; ph.style.fontSize="0"; } }; });
-      })
-      .catch(function(e){ console.warn("[card] photos read failed", e); });
+    var seen={}, list=[];
+    function add(path,angle){ if(path && !seen[path]){ seen[path]=1; list.push({path:path,angle:angle||""}); } }
+    add(pt.photo_path,"");
+    var e1=fetch(C.SUPABASE_URL+"/rest/v1/pet_embeddings?select=photo_path,angle&pet_id=eq."+encodeURIComponent(pt.id),{headers:hdr()}).then(function(r){return r.ok?r.json():[];}).then(function(rows){ if(Array.isArray(rows)) rows.forEach(function(x){ add(x.photo_path,x.angle); }); }).catch(function(e){ console.warn("[card] embeddings read failed",e); });
+    var e2=fetch(C.SUPABASE_URL+"/storage/v1/object/list/"+(C.BUCKET||"pet-media"),{method:"POST",headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:"Bearer "+C.SUPABASE_ANON_KEY,"Content-Type":"application/json"},body:JSON.stringify({prefix:"pets/"+pt.id+"/photos/",limit:100,offset:0})}).then(function(r){return r.ok?r.json():[];}).then(function(objs){ if(Array.isArray(objs)) objs.forEach(function(o){ if(o&&o.name&&o.name.indexOf(".emptyFolderPlaceholder")<0){ add("pets/"+pt.id+"/photos/"+o.name,""); } }); }).catch(function(e){ console.warn("[card] storage list failed",e); });
+    Promise.all([e1,e2]).then(function(){
+      console.log("[card] total photos =",list.length);
+      if(list.length<2) return;
+      var g=document.getElementById("gal"); if(!g) return;
+      g.innerHTML='<div class="t">All photos ('+list.length+')</div><div class="gal">'
+        + list.map(function(p){ var u=photoUrl(p.path); return '<div class="gthumb" data-u="'+esc(u)+'"><img src="'+esc(u)+'" alt="" loading="lazy"/>'+(p.angle?'<span>'+esc(p.angle)+'</span>':'')+'</div>'; }).join("")
+        + '</div>';
+      g.querySelectorAll(".gthumb").forEach(function(el){ el.onclick=function(){ var ph=document.querySelector(".card .ph"); if(ph){ ph.style.backgroundImage="url('"+el.dataset.u+"')"; ph.style.fontSize="0"; } }; });
+    });
   }
   function render(pt){
-    var digital=pt.public_code||pt.biometric_id||code;
+    var _m=(pt.metadata&&typeof pt.metadata==="object")?pt.metadata:null; if(_m){ if(!pt.is_lost&&(_m.isLost===true||_m.is_lost===true))pt.is_lost=true; if(pt.lost_since==null&&(_m.lostSince||_m.lost_since))pt.lost_since=_m.lostSince||_m.lost_since; if(pt.lost_note==null&&(_m.lostNote||_m.lost_note))pt.lost_note=_m.lostNote||_m.lost_note; } var digital=pt.public_code||pt.biometric_id||code;
     var emoji=pt.species==="cat"?"\ud83d\udc31":"\ud83d\udc36";
     var ph=photoUrl(pt.photo_path);
     document.title=(pt.name||"Dog")+" \u00b7 KYP ID "+digital;
