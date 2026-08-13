@@ -2,7 +2,8 @@
 (function () {
   var C = window.KYPWEB || {};
   var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
-  var SAFE = "id,name,species,breed,public_code,biometric_id,photo_path,area,lat,lng,is_street,has_noseprint,is_lost,lost_since,lost_note,owner_phone,owner_name,created_at";
+  var SAFE_MIN = "id,name,species,breed,public_code,biometric_id,photo_path,area,lat,lng,is_street,has_noseprint,is_lost,lost_since,owner_phone";
+  var SAFE = SAFE_MIN + ",lost_note,created_at";
   var EMOJI = { dog: "\ud83d\udc36", cat: "\ud83d\udc31" };
   function esc(s){return String(s==null?"":s).replace(/[&<>\"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
   function photoUrl(p){ if(!p) return ""; if(/^https?:/.test(p)) return p; return C.SUPABASE_URL + "/storage/v1/object/public/" + (C.BUCKET||"pet-media") + "/" + p; }
@@ -47,10 +48,10 @@
     if(!q){ hint.style.display=""; hint.textContent="Type an ID, number, or name above and hit Search."; out.innerHTML=""; return; }
     hint.style.display=""; hint.innerHTML='<span class="spinner"></span>'; out.innerHTML="";
     var like="%"+q+"%";
-    sb.from("pets").select(SAFE)
-      .or("public_code.ilike."+like+",biometric_id.ilike."+like+",name.ilike."+like)
-      .limit(40)
+    function attempt(cols){ return sb.from("pets").select(cols).or("public_code.ilike."+like+",biometric_id.ilike."+like+",name.ilike."+like).limit(40); }
+    attempt(SAFE).then(function(r){ if(r.error){ console.warn("[search] column fallback:", r.error.message||r.error); return attempt(SAFE_MIN); } return r; })
       .then(function(r){
+        if(r.error){ console.error("[search] failed:", r.error); hint.textContent="Search error \u2014 please try again."; return; }
         var rows=r.data||[];
         if(!rows.length){ hint.textContent="No dogs found for \u201c"+q+"\u201d."; return; }
         hint.style.display="none";
@@ -121,35 +122,36 @@
     var bi=inList("biometric_id",codes); if(bi) parts.push(bi);
     var idp=inList("id",uuids); if(idp) parts.push(idp);
     var pp=inList("photo_path",paths); if(pp) parts.push(pp);
-    var query = sb.from("pets").select(SAFE);
-    if(parts.length){ query = query.or(parts.join(",")); }
-    query.limit(20).then(function(r){
-      if(r.error){ console.error("[identify] resolve error:", r.error); }
-      var rows=r.data||[];
-      rows.forEach(function(p){
-        var m=matches.filter(function(x){ return x.key===p.public_code||x.key===p.biometric_id||x.key===String(p.id)||x.photo_path===p.photo_path; })[0];
-        p.__score = m?m.score:null;
+    function attempt(cols){ var qy=sb.from("pets").select(cols); if(parts.length){ qy=qy.or(parts.join(",")); } return qy.limit(20); }
+    attempt(SAFE).then(function(r){ if(r.error){ console.warn("[identify] column fallback:", r.error.message||r.error); return attempt(SAFE_MIN); } return r; })
+      .then(function(r){
+        if(r.error){ console.error("[identify] resolve error:", r.error); }
+        var rows=r.data||[];
+        rows.forEach(function(p){
+          var m=matches.filter(function(x){ return x.key===p.public_code||x.key===p.biometric_id||x.key===String(p.id)||x.photo_path===p.photo_path; })[0];
+          p.__score = m?m.score:null;
+        });
+        rows.sort(function(a,b){return (b.__score||0)-(a.__score||0);});
+        if(!rows.length){
+          var seen = codes.concat(uuids).slice(0,3).join(", ");
+          pout.innerHTML='<div class="empty">We found a visual match'+(seen?' (<b>'+esc(seen)+'</b>)':'')+', but that dog isn\u2019t in the public database yet.</div>';
+          return;
+        }
+        pout.innerHTML=rows.map(function(p){
+          var pct = p.__score!=null ? (p.__score>1?Math.round(p.__score):Math.round(p.__score*100)) : null;
+          var sc = pct!=null ? '<span class="score">'+pct+'% match</span>' : "";
+          return petCard(p, sc);
+        }).join("");
+        wire(pout, rows);
       });
-      rows.sort(function(a,b){return (b.__score||0)-(a.__score||0);});
-      if(!rows.length){
-        var seen = codes.concat(uuids).slice(0,3).join(", ");
-        pout.innerHTML='<div class="empty">We found a visual match'+(seen?' (<b>'+esc(seen)+'</b>)':'')+', but that dog isn\u2019t in the public database yet.</div>';
-        return;
-      }
-      pout.innerHTML=rows.map(function(p){
-        var pct = p.__score!=null ? (p.__score>1?Math.round(p.__score):Math.round(p.__score*100)) : null;
-        var sc = pct!=null ? '<span class="score">'+pct+'% match</span>' : "";
-        return petCard(p, sc);
-      }).join("");
-      wire(pout, rows);
-    });
   }
 
   var lostOut=document.getElementById("lostOut"), lostHint=document.getElementById("lostHint"), lq=document.getElementById("lq");
   var LOST=[]; var myLoc=null;
+  function lostAttempt(cols){ return sb.from("pets").select(cols).eq("is_lost",true).order("lost_since",{ascending:false}).limit(200); }
   function loadLost(){
     lostHint.style.display=""; lostHint.innerHTML='<span class="spinner"></span>';
-    sb.from("pets").select(SAFE).eq("is_lost",true).order("lost_since",{ascending:false}).limit(200)
+    lostAttempt(SAFE).then(function(r){ if(r.error){ console.warn("[lost] column fallback:", r.error.message||r.error); return lostAttempt(SAFE_MIN); } return r; })
       .then(function(r){ LOST=r.data||[]; renderLost(); subscribeLost(); });
   }
   function dist(a,b,c,d){ if([a,b,c,d].some(function(x){return x==null;})) return null; var R=6371,dLat=(c-a)*Math.PI/180,dLon=(d-b)*Math.PI/180,la1=a*Math.PI/180,la2=c*Math.PI/180; var h=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)*Math.sin(dLon/2); return 2*R*Math.asin(Math.sqrt(h)); }
@@ -181,7 +183,7 @@
       sb.channel("lost-pets").on("postgres_changes",{event:"*",schema:"public",table:"pets"},function(){ loadLostQuiet(); }).subscribe();
     }catch(e){}
   }
-  function loadLostQuiet(){ sb.from("pets").select(SAFE).eq("is_lost",true).order("lost_since",{ascending:false}).limit(200).then(function(r){ LOST=r.data||[]; renderLost(); }); }
+  function loadLostQuiet(){ lostAttempt(SAFE).then(function(r){ if(r.error){ return lostAttempt(SAFE_MIN); } return r; }).then(function(r){ LOST=r.data||[]; renderLost(); }); }
 
   var ov=document.getElementById("ov"), idcard=document.getElementById("idcard"), curPt=null, detailsBox=null;
   function ensureDetailsBox(){

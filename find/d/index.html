@@ -55,43 +55,57 @@ body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:ce
   var code=(codeRaw||"").trim();
   var root=document.getElementById("root");
   function miss(){ root.innerHTML='<div class="miss">\ud83d\udc3e This ID (<b>'+esc(code||"\u2014")+'</b>) could not be found.<br><br><a class="lk" href="../">Go to Pawwltu</a></div>'; }
-  if(!code || !C.SUPABASE_URL){ miss(); return; }
-  var cols="name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since,lost_note,created_at";
-  var url=C.SUPABASE_URL+"/rest/v1/pets?select="+cols+"&or=(public_code.eq."+encodeURIComponent(code)+",biometric_id.eq."+encodeURIComponent(code)+")&limit=1";
-  fetch(url,{headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:"Bearer "+C.SUPABASE_ANON_KEY}})
-    .then(function(r){return r.json();})
-    .then(function(rows){
-      var pt=Array.isArray(rows)&&rows[0]?rows[0]:null;
-      if(!pt){ miss(); return; }
-      var digital=pt.public_code||pt.biometric_id||code;
-      var emoji=pt.species==="cat"?"\ud83d\udc31":"\ud83d\udc36";
-      var ph=photoUrl(pt.photo_path);
-      document.title=(pt.name||"Dog")+" \u00b7 KYP ID "+digital;
-      var nose=pt.has_noseprint?'<div class="badge y">\ud83d\udd12 NOSEPRINT VERIFIED</div>':'<div class="badge n">\ud83d\udcf7 PHOTO ONLY</div>';
-      var ribbon=pt.is_lost?'<div class="ribbon">LOST</div>':"";
-      var det="";
-      det+=drow("Status", pt.has_noseprint?"Noseprint verified":"Photo only");
-      det+=drow("Type", pt.is_street?"Street dog":"Home pet");
-      det+=drow("Species", cap(pt.species));
-      det+=drow("Breed", pt.breed);
-      det+=drow("Area", pt.area);
-      det+=drow("Registered", pt.created_at?fmtDate(pt.created_at):null);
-      if(pt.is_lost){ det+=drow("Reported lost", pt.lost_since?fmtDate(pt.lost_since):"Recently"); det+=drow("Note", pt.lost_note); }
-      root.innerHTML=
-        '<div class="wrap"><div class="card">'+ribbon
-        +'<div class="hd"><b>\ud83d\udc3e KYP \u00b7 PET ID</b><span style="font-size:11px;opacity:.9">by Pawwltu</span></div>'
-        +'<div class="ph" '+(ph?('style="background-image:url(\''+esc(ph)+'\')"'):'')+'>'+(ph?"":emoji)+'<div class="grad"></div>'+nose
-        +'<div class="nm"><b>'+esc(pt.name||"Unnamed")+'</b><div style="font-size:12px;opacity:.95">'+esc(pt.breed||(pt.is_street?"Street dog":"\u2014"))+(pt.area?" \u00b7 "+esc(pt.area):"")+'</div></div></div>'
-        +'<div class="ft"><div><div style="font-size:10px;letter-spacing:1.4px;opacity:.82">DIGITAL ID</div><div class="id">'+esc(digital)+'</div></div>'
-        +'<div style="text-align:right;font-size:11px;opacity:.92;line-height:1.5">'+(pt.is_street?"Street dog":"Home pet")+'<br>'+(pt.has_noseprint?"\ud83d\udd12 100% verifiable":"\ud83d\udcf7 photo match")+'</div></div>'
-        +'<div class="bar"></div><div class="gloss"></div></div></div>'
-        +'<div class="details"><div class="t">Details</div>'+det+'</div>'
-        +'<div class="links"><a class="lk" href="../?q='+encodeURIComponent(digital)+'">\ud83d\udd0d View on Pawwltu</a>'
-        +'<button class="lk" id="sh">\ud83d\udce4 Share</button></div>';
-      var sh=document.getElementById("sh");
-      if(sh) sh.onclick=function(){ var link=location.href; var text=(pt.name||"This dog")+" \u00b7 KYP ID "+digital+(pt.is_lost?" \u2014 REPORTED LOST":"")+"\n"+link; if(navigator.share){navigator.share({title:"KYP Pet ID",text:text,url:link});}else if(navigator.clipboard){navigator.clipboard.writeText(text);sh.textContent="\u2705 Copied";} };
-    })
-    .catch(function(){ miss(); });
+  if(!code){ console.error("[card] no code in URL"); miss(); return; }
+  if(!C.SUPABASE_URL || /YOUR-PROJECT/.test(C.SUPABASE_URL)){ console.error("[card] config.js not loaded or not filled (SUPABASE_URL missing)"); miss(); return; }
+  var FULL="name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since,lost_note,created_at";
+  var MIN="name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since";
+  function q(cols){ return C.SUPABASE_URL+"/rest/v1/pets?select="+cols+"&or=(public_code.eq."+encodeURIComponent(code)+",biometric_id.eq."+encodeURIComponent(code)+")&limit=1"; }
+  function run(cols, isRetry){
+    fetch(q(cols),{headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:"Bearer "+C.SUPABASE_ANON_KEY}})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,status:r.status,body:j}; }); })
+      .then(function(res){
+        if(!res.ok){
+          console.error("[card] lookup HTTP "+res.status, res.body);
+          if(!isRetry){ console.warn("[card] retrying with minimal columns"); run(MIN, true); return; }
+          miss(); return;
+        }
+        var rows=res.body;
+        var pt=Array.isArray(rows)&&rows[0]?rows[0]:null;
+        if(!pt){ console.warn("[card] no row for code", code); miss(); return; }
+        render(pt);
+      })
+      .catch(function(e){ console.error("[card] fetch failed", e); if(!isRetry){ run(MIN, true); } else { miss(); } });
+  }
+  function render(pt){
+    var digital=pt.public_code||pt.biometric_id||code;
+    var emoji=pt.species==="cat"?"\ud83d\udc31":"\ud83d\udc36";
+    var ph=photoUrl(pt.photo_path);
+    document.title=(pt.name||"Dog")+" \u00b7 KYP ID "+digital;
+    var nose=pt.has_noseprint?'<div class="badge y">\ud83d\udd12 NOSEPRINT VERIFIED</div>':'<div class="badge n">\ud83d\udcf7 PHOTO ONLY</div>';
+    var ribbon=pt.is_lost?'<div class="ribbon">LOST</div>':"";
+    var det="";
+    det+=drow("Status", pt.has_noseprint?"Noseprint verified":"Photo only");
+    det+=drow("Type", pt.is_street?"Street dog":"Home pet");
+    det+=drow("Species", cap(pt.species));
+    det+=drow("Breed", pt.breed);
+    det+=drow("Area", pt.area);
+    det+=drow("Registered", pt.created_at?fmtDate(pt.created_at):null);
+    if(pt.is_lost){ det+=drow("Reported lost", pt.lost_since?fmtDate(pt.lost_since):"Recently"); det+=drow("Note", pt.lost_note); }
+    root.innerHTML=
+      '<div class="wrap"><div class="card">'+ribbon
+      +'<div class="hd"><b>\ud83d\udc3e KYP \u00b7 PET ID</b><span style="font-size:11px;opacity:.9">by Pawwltu</span></div>'
+      +'<div class="ph" '+(ph?('style="background-image:url(\''+esc(ph)+'\')"'):'')+'>'+(ph?"":emoji)+'<div class="grad"></div>'+nose
+      +'<div class="nm"><b>'+esc(pt.name||"Unnamed")+'</b><div style="font-size:12px;opacity:.95">'+esc(pt.breed||(pt.is_street?"Street dog":"\u2014"))+(pt.area?" \u00b7 "+esc(pt.area):"")+'</div></div></div>'
+      +'<div class="ft"><div><div style="font-size:10px;letter-spacing:1.4px;opacity:.82">DIGITAL ID</div><div class="id">'+esc(digital)+'</div></div>'
+      +'<div style="text-align:right;font-size:11px;opacity:.92;line-height:1.5">'+(pt.is_street?"Street dog":"Home pet")+'<br>'+(pt.has_noseprint?"\ud83d\udd12 100% verifiable":"\ud83d\udcf7 photo match")+'</div></div>'
+      +'<div class="bar"></div><div class="gloss"></div></div></div>'
+      +'<div class="details"><div class="t">Details</div>'+det+'</div>'
+      +'<div class="links"><a class="lk" href="../?q='+encodeURIComponent(digital)+'">\ud83d\udd0d View on Pawwltu</a>'
+      +'<button class="lk" id="sh">\ud83d\udce4 Share</button></div>';
+    var sh=document.getElementById("sh");
+    if(sh) sh.onclick=function(){ var link=location.href; var text=(pt.name||"This dog")+" \u00b7 KYP ID "+digital+(pt.is_lost?" \u2014 REPORTED LOST":"")+"\n"+link; if(navigator.share){navigator.share({title:"KYP Pet ID",text:text,url:link});}else if(navigator.clipboard){navigator.clipboard.writeText(text);sh.textContent="\u2705 Copied";} };
+  }
+  run(FULL, false);
 })();
 </script>
 </body>
