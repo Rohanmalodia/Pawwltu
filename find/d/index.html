@@ -54,6 +54,26 @@ body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:ce
   function fmtDate(s){ try{ return new Date(s).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});}catch(e){return "";} }
   function photoUrl(p){ if(!p) return ""; if(/^https?:/.test(p)) return p; return C.SUPABASE_URL+"/storage/v1/object/public/"+(C.BUCKET||"pet-media")+"/"+p; }
   function drow(l,v){ if(v==null||v==="") return ""; return '<div class="drow"><span class="l">'+esc(l)+'</span><span class="v">'+esc(v)+'</span></div>'; }
+  function yn(v){ return v==null?null:(v?"Yes":"No"); }
+  function drowHtml(l,v){ return '<div class="drow"><span class="l">'+esc(l)+'</span><span class="v">'+v+'</span></div>'; }
+  function loadExtra(pt){
+    var t=pt.is_street?"street_profiles":"owned_profiles";
+    fetch(C.SUPABASE_URL+"/rest/v1/"+t+"?select=*&pet_id=eq."+encodeURIComponent(pt.id)+"&limit=1",{headers:hdr()}).then(function(r){return r.ok?r.json():[];}).then(function(a){
+      var d=a&&a[0]; if(!d) return; var box=document.getElementById("detExtra"); if(!box) return; var h="";
+      if(pt.is_street){ h+=drow("NGO",d.ngo_name); h+=drow("Caretaker",d.caretaker_phone); h+=drow("Colony",d.colony_area); h+=drow("Sterilized",yn(d.sterilized)); h+=drow("Ear notch",yn(d.ear_notch)); h+=drow("Rabies vaccinated",yn(d.rabies_vaccinated)); h+=drow("Rabies date",d.rabies_date?fmtDate(d.rabies_date):null); h+=drow("Dewormed",yn(d.dewormed)); }
+      else { h+=drow("Sex",d.sex); h+=drow("Date of birth",d.dob?fmtDate(d.dob):null); if(d.breed) h+=drow("Breed",d.breed); }
+      if(h) box.innerHTML='<div class="t">Profile</div>'+h;
+    }).catch(function(e){ console.warn("[card] profile read failed",e); });
+  }
+  function renderMeta(pt){
+    var m=(pt.metadata&&typeof pt.metadata==="object")?pt.metadata:null; if(!m) return;
+    var box=document.getElementById("detMeta"); if(!box) return; var h="";
+    var v=m.vitals||null, vit=""; if(v){ vit+=drow("Microchip",v.microchip); vit+=drow("Weight",v.weight); vit+=drow("Vet",v.vetName||v.clinic); vit+=drow("Vet phone",v.vetPhone); } if(vit) h+='<div class="t">Vitals</div>'+vit;
+    if(m.vax&&m.vax.length){ var vr=""; m.vax.slice(0,10).forEach(function(x){ vr+=drow(x.name||"Vaccine",(x.date?fmtDate(x.date):"")+(x.due?(" \u00b7 due "+fmtDate(x.due)):"")); }); if(vr) h+='<div class="t">Vaccinations</div>'+vr; }
+    if(m.medical&&m.medical.length){ var mr=""; m.medical.slice(0,6).forEach(function(x){ mr+=drow(x.kind||"Note",x.text); }); if(mr) h+='<div class="t">Medical notes</div>'+mr; }
+    if(m.docs&&m.docs.length){ var dr=""; m.docs.slice(0,12).forEach(function(x){ var nm=x.name||"Document"; var url=x.url||(x.path?photoUrl(x.path):null); dr+=drowHtml(nm,url?('<a href="'+esc(url)+'" target="_blank" style="color:#5B5BF0">Open</a>'):'<span style="color:#9aa2bd">on owner device</span>'); }); h+='<div class="t">Documents ('+m.docs.length+')</div>'+dr; }
+    if(h) box.innerHTML=h;
+  }
   function hdr(){ return {apikey:C.SUPABASE_ANON_KEY,Authorization:"Bearer "+C.SUPABASE_ANON_KEY}; }
   var usp=new URLSearchParams(location.search);
   var codeRaw = usp.get("c") || usp.get("code") || decodeURIComponent((location.hash||"").replace(/^#/,"")) || decodeURIComponent(location.pathname.split("/").filter(Boolean).pop()||"");
@@ -62,8 +82,8 @@ body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:ce
   function miss(){ root.innerHTML='<div class="miss">\ud83d\udc3e This ID (<b>'+esc(code||"\u2014")+'</b>) could not be found.<br><br><a class="lk" href="../">Go to Pawwltu</a></div>'; }
   if(!code){ console.error("[card] no code in URL"); miss(); return; }
   if(!C.SUPABASE_URL || /YOUR-PROJECT/.test(C.SUPABASE_URL)){ console.error("[card] config.js not loaded or not filled (SUPABASE_URL missing)"); miss(); return; }
-  var FULL="id,name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since,lost_note,created_at,metadata";
-  var MIN="id,name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since,metadata";
+  var FULL="id,name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since,lost_note,created_at,owner_phone,metadata";
+  var MIN="id,name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since,owner_phone,metadata";
   function q(cols){ return C.SUPABASE_URL+"/rest/v1/pets?select="+cols+"&or=(public_code.eq."+encodeURIComponent(code)+",biometric_id.eq."+encodeURIComponent(code)+")&limit=1"; }
   function run(cols, isRetry){
     fetch(q(cols),{headers:hdr()})
@@ -112,6 +132,7 @@ body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:ce
     det+=drow("Breed", pt.breed);
     det+=drow("Area", pt.area);
     det+=drow("Registered", pt.created_at?fmtDate(pt.created_at):null);
+    if(pt.owner_phone && !pt.is_lost){ det+='<div style="padding:9px 14px"><a style="text-decoration:none;font-size:13px;padding:7px 13px;border-radius:999px;background:#12B886;color:#fff;font-weight:700" href="tel:'+esc(pt.owner_phone)+'">Call owner</a></div>'; }
     if(pt.is_lost){ det+=drow("Reported lost", pt.lost_since?fmtDate(pt.lost_since):"Recently"); det+=drow("Note", pt.lost_note); }
     root.innerHTML=
       '<div class="wrap"><div class="card">'+ribbon
@@ -122,15 +143,20 @@ body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:ce
       +'<div style="text-align:right;font-size:11px;opacity:.92;line-height:1.5">'+(pt.is_street?"Street dog":"Home pet")+'<br>'+(pt.has_noseprint?"\ud83d\udd12 100% verifiable":"\ud83d\udcf7 photo match")+'</div></div>'
       +'<div class="bar"></div><div class="gloss"></div></div></div>'
       +'<div class="details"><div class="t">Details</div>'+det+'</div>'
+      +'<div class="details" id="detExtra"></div>'
+      +'<div class="details" id="detMeta"></div>'
       +'<div class="details" id="gal"></div>'
       +'<div class="links"><a class="lk" href="../?q='+encodeURIComponent(digital)+'">\ud83d\udd0d View on Pawwltu</a>'
       +'<button class="lk" id="sh">\ud83d\udce4 Share</button></div>';
     var sh=document.getElementById("sh");
     if(sh) sh.onclick=function(){ var link=location.href; var text=(pt.name||"This dog")+" \u00b7 KYP ID "+digital+(pt.is_lost?" \u2014 REPORTED LOST":"")+"\n"+link; if(navigator.share){navigator.share({title:"KYP Pet ID",text:text,url:link});}else if(navigator.clipboard){navigator.clipboard.writeText(text);sh.textContent="\u2705 Copied";} };
     loadPhotos(pt);
+    loadExtra(pt);
+    renderMeta(pt);
   }
   run(FULL, false);
 })();
 </script>
 </body>
 </html>
+​
