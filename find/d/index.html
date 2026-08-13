@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pawwltu · Pet ID</title>
+<meta name="description" content="Pawwltu digital pet ID card."/>
+<meta property="og:type" content="profile"/>
+<meta property="og:title" content="Pawwltu · Pet ID"/>
+<meta property="og:description" content="View this dog's digital ID card on Pawwltu."/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%BE%3C/text%3E%3C/svg%3E"/>
+<style>
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:26px;background:radial-gradient(circle at 30% 10%,#20204a,#0b0b18);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}
+.wrap{perspective:1300px;width:min(360px,88vw)}
+.card{position:relative;transform:rotateX(7deg) rotateY(-9deg);border-radius:22px;overflow:hidden;box-shadow:0 34px 70px rgba(0,0,0,.6);background:linear-gradient(135deg,#5B5BF0,#8B5CF6 55%,#FF7A59 130%);color:#fff}
+.hd{padding:16px 18px 0;display:flex;justify-content:space-between;align-items:center}
+.hd b{font-size:14px;letter-spacing:.5px}
+.ph{margin:14px 16px 0;border-radius:16px;overflow:hidden;height:210px;background:#00000022 center/cover no-repeat;position:relative;display:flex;align-items:center;justify-content:center;font-size:76px}
+.ph .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(0,0,0,.6))}
+.ph .nm{position:absolute;left:14px;bottom:11px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+.ph .nm b{font-size:24px;font-weight:800}
+.badge{position:absolute;top:10px;right:10px;font-size:11px;font-weight:800;padding:5px 10px;border-radius:20px}
+.badge.y{background:#12B886;color:#fff;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.badge.n{background:rgba(0,0,0,.5);color:#fff}
+.ribbon{position:absolute;top:16px;left:-34px;transform:rotate(-45deg);background:#F0544F;color:#fff;font-weight:800;font-size:12px;padding:5px 40px;z-index:2;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.ft{padding:14px 18px 16px;display:flex;justify-content:space-between;align-items:flex-end}
+.ft .id{font-family:ui-monospace,Menlo,monospace;font-size:19px;font-weight:800}
+.bar{height:8px;background:linear-gradient(90deg,#FF7A59,#8B5CF6,#5B5BF0)}
+.gloss{position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(160deg,rgba(255,255,255,.22),transparent);pointer-events:none}
+.links{display:flex;gap:10px}
+.lk{padding:11px 18px;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none;color:#fff;background:rgba(255,255,255,.16);cursor:pointer;border:none}
+.miss,.load{color:#fff;text-align:center;font-size:16px;opacity:.9}
+.spinner{width:26px;height:26px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp 1s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="root"><div class="load"><span class="spinner"></span></div></div>
+<script src="../config.js"></script>
+<script>
+(function(){
+  var C=window.KYPWEB||{};
+  function esc(s){return String(s==null?"":s).replace(/[&<>\"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function photoUrl(p){ if(!p) return ""; if(/^https?:/.test(p)) return p; return C.SUPABASE_URL+"/storage/v1/object/public/"+(C.BUCKET||"pet-media")+"/"+p; }
+  // code from ?c=CODE  or  #CODE  or  last path segment
+  var usp=new URLSearchParams(location.search);
+  var codeRaw = usp.get("c") || usp.get("code") || decodeURIComponent((location.hash||"").replace(/^#/,"")) || decodeURIComponent(location.pathname.split("/").filter(Boolean).pop()||"");
+  var code=(codeRaw||"").trim();
+  var root=document.getElementById("root");
+  function miss(){ root.innerHTML='<div class="miss">\ud83d\udc3e This ID (<b>'+esc(code||"\u2014")+'</b>) could not be found.<br><br><a class="lk" href="../">Go to Pawwltu</a></div>'; }
+  if(!code || !C.SUPABASE_URL){ miss(); return; }
+  var cols="name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost";
+  var url=C.SUPABASE_URL+"/rest/v1/pets?select="+cols+"&or=(public_code.eq."+encodeURIComponent(code)+",biometric_id.eq."+encodeURIComponent(code)+")&limit=1";
+  fetch(url,{headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:"Bearer "+C.SUPABASE_ANON_KEY}})
+    .then(function(r){return r.json();})
+    .then(function(rows){
+      var pt=Array.isArray(rows)&&rows[0]?rows[0]:null;
+      if(!pt){ miss(); return; }
+      var digital=pt.public_code||pt.biometric_id||code;
+      var emoji=pt.species==="cat"?"\ud83d\udc31":"\ud83d\udc36";
+      var ph=photoUrl(pt.photo_path);
+      document.title=(pt.name||"Dog")+" \u00b7 KYP ID "+digital;
+      var nose=pt.has_noseprint?'<div class="badge y">\ud83d\udd12 NOSEPRINT VERIFIED</div>':'<div class="badge n">\ud83d\udcf7 PHOTO ONLY</div>';
+      var ribbon=pt.is_lost?'<div class="ribbon">LOST</div>':"";
+      root.innerHTML=
+        '<div class="wrap"><div class="card">'+ribbon
+        +'<div class="hd"><b>\ud83d\udc3e KYP \u00b7 PET ID</b><span style="font-size:11px;opacity:.9">by Pawwltu</span></div>'
+        +'<div class="ph" '+(ph?('style="background-image:url(\''+esc(ph)+'\')"'):'')+'>'+(ph?"":emoji)+'<div class="grad"></div>'+nose
+        +'<div class="nm"><b>'+esc(pt.name||"Unnamed")+'</b><div style="font-size:12px;opacity:.95">'+esc(pt.breed||(pt.is_street?"Street dog":"\u2014"))+(pt.area?" \u00b7 "+esc(pt.area):"")+'</div></div></div>'
+        +'<div class="ft"><div><div style="font-size:10px;letter-spacing:1.4px;opacity:.82">DIGITAL ID</div><div class="id">'+esc(digital)+'</div></div>'
+        +'<div style="text-align:right;font-size:11px;opacity:.92;line-height:1.5">'+(pt.is_street?"Street dog":"Home pet")+'<br>'+(pt.has_noseprint?"\ud83d\udd12 100% verifiable":"\ud83d\udcf7 photo match")+'</div></div>'
+        +'<div class="bar"></div><div class="gloss"></div></div></div>'
+        +'<div class="links"><a class="lk" href="../?q='+encodeURIComponent(digital)+'">\ud83d\udd0d View on Pawwltu</a>'
+        +'<button class="lk" id="sh">\ud83d\udce4 Share</button></div>';
+      var sh=document.getElementById("sh");
+      if(sh) sh.onclick=function(){ var link=location.href; var text=(pt.name||"This dog")+" \u00b7 KYP ID "+digital+(pt.is_lost?" \u2014 REPORTED LOST":"")+"\n"+link; if(navigator.share){navigator.share({title:"KYP Pet ID",text:text,url:link});}else if(navigator.clipboard){navigator.clipboard.writeText(text);sh.textContent="\u2705 Copied";} };
+    })
+    .catch(function(){ miss(); });
+})();
+</script>
+</body>
+</html>
