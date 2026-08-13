@@ -4,8 +4,8 @@
 // ============================================================
 window.KYPWEB = {
   // From Supabase → Project Settings → API
-  SUPABASE_URL: "https://YOUR-PROJECT.supabase.co",
-  SUPABASE_ANON_KEY: "YOUR-ANON-PUBLIC-KEY",
+  SUPABASE_URL: "https://xmlcyxdmctnfviufoghm.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtbGN5eGRtY3RuZnZpdWZvZ2htIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NTgwOTgsImV4cCI6MjEwMTQzNDA5OH0.fKFBZ0blr1JMZofwUOdUeKsQYQnchA9jd_yu-HbX3bk",
 
   // Your Cloudflare Tunnel URL for the re-ID server (see setup steps).
   // Example: https://reid.pawwltu.com  (or the temporary trycloudflare URL)
