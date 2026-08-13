@@ -2,139 +2,161 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>Pawwltu · Know Your Pet</title>
-<meta name="description" content="Search and identify dogs by ID or photo. See lost dogs near you."/>
-<meta property="og:title" content="Pawwltu · Know Your Pet"/>
-<meta property="og:description" content="Search and identify dogs by ID or photo. See lost dogs near you."/>
-<meta property="og:type" content="website"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pawwltu \u00b7 Pet ID</title>
+<meta name="description" content="Pawwltu digital pet ID card."/>
+<meta property="og:type" content="profile"/>
+<meta property="og:title" content="Pawwltu \u00b7 Pet ID"/>
+<meta property="og:description" content="View this dog's digital ID card on Pawwltu."/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%BE%3C/text%3E%3C/svg%3E"/>
 <style>
-:root{--brand:#5B5BF0;--brand2:#8B5CF6;--accent:#FF7A59;--green:#12B886;--red:#F0544F;--canvas:#F5F6FB;--ink:#141420;--mut:#6B7192}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--canvas);color:var(--ink)}
-a{color:inherit}
-.wrap{max-width:1040px;margin:0 auto;padding:0 18px}
-header.top{position:sticky;top:0;z-index:20;background:rgba(245,246,251,.86);backdrop-filter:blur(10px);border-bottom:1px solid #e7e8f2}
-.topin{display:flex;align-items:center;justify-content:space-between;height:60px}
-.logo{font-weight:800;font-size:18px;display:flex;align-items:center;gap:8px}
-.logo small{font-weight:600;color:var(--mut);font-size:12px}
-.hero{background:linear-gradient(135deg,#5B5BF0,#8B5CF6 55%,#FF7A59 135%);color:#fff;padding:40px 0 46px;border-radius:0 0 26px 26px}
-.hero h1{margin:0 0 8px;font-size:30px;letter-spacing:-.5px}
-.hero p{margin:0;opacity:.94;font-size:15px}
-.card{background:#fff;border:1px solid #ecedf6;border-radius:18px;box-shadow:0 8px 26px rgba(30,30,80,.06)}
-.searchbar{margin-top:22px;display:flex;gap:10px;background:#fff;border-radius:16px;padding:8px;box-shadow:0 12px 34px rgba(20,20,60,.16)}
-.searchbar input{flex:1;border:none;outline:none;font-size:16px;padding:12px 14px;border-radius:12px;background:#f4f5fb}
-.btn{border:none;border-radius:12px;padding:12px 18px;font-weight:700;font-size:14px;cursor:pointer;background:var(--brand);color:#fff;transition:.15s}
-.btn:hover{filter:brightness(1.05)}
-.btn.ghost{background:#eef0f9;color:var(--ink)}
-.btn.sm{padding:8px 12px;font-size:13px}
-.tabs{display:flex;gap:8px;margin:18px 0}
-.tab{padding:9px 15px;border-radius:999px;background:#eceef8;color:var(--mut);font-weight:700;font-size:14px;cursor:pointer}
-.tab.active{background:var(--brand);color:#fff}
-.sec{margin:22px 0}
-.sec h2{font-size:19px;margin:0 0 4px}
-.sec .muted{color:var(--mut);font-size:14px;margin:0 0 14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.pet{background:#fff;border:1px solid #ecedf6;border-radius:16px;overflow:hidden;cursor:pointer;transition:.15s}
-.pet:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(20,20,60,.12)}
-.pet .ph{height:150px;background:#eef0f9 center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:54px;position:relative}
-.pet .bd{padding:12px 13px}
-.pet .nm{font-weight:800;font-size:16px;display:flex;align-items:center;gap:6px}
-.pet .mt{color:var(--mut);font-size:13px;margin-top:2px}
-.pet .code{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--brand);font-weight:700;margin-top:6px}
-.pill{display:inline-block;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;background:#eef0f9;color:var(--mut)}
-.pill.green{background:#e5f8f1;color:#0c7a58}
-.pill.red{background:#fdece9;color:#b42318}
-.ribbon{position:absolute;top:10px;left:-30px;transform:rotate(-45deg);background:var(--red);color:#fff;font-weight:800;font-size:11px;padding:4px 34px;z-index:2}
-.badge-nose{position:absolute;top:8px;right:8px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px}
-.badge-nose.y{background:var(--green);color:#fff}
-.badge-nose.n{background:rgba(0,0,0,.5);color:#fff}
-.empty{color:var(--mut);text-align:center;padding:40px 10px}
-.drop{border:2px dashed #c9cbe6;border-radius:16px;padding:26px;text-align:center;color:var(--mut);background:#fff;cursor:pointer;display:block}
-.drop.drag{border-color:var(--brand);background:#f3f3ff}
-.spinner{width:22px;height:22px;border:3px solid #dfe1f0;border-top-color:var(--brand);border-radius:50%;animation:sp 1s linear infinite;display:inline-block;vertical-align:middle}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:26px;background:radial-gradient(circle at 30% 10%,#20204a,#0b0b18);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}
+.wrap{perspective:1300px;width:min(360px,88vw)}
+.card{position:relative;transform:rotateX(7deg) rotateY(-9deg);border-radius:22px;overflow:hidden;box-shadow:0 34px 70px rgba(0,0,0,.6);background:linear-gradient(135deg,#5B5BF0,#8B5CF6 55%,#FF7A59 130%);color:#fff}
+.hd{padding:16px 18px 0;display:flex;justify-content:space-between;align-items:center}
+.hd b{font-size:14px;letter-spacing:.5px}
+.ph{margin:14px 16px 0;border-radius:16px;overflow:hidden;height:210px;background:#00000022 center/cover no-repeat;position:relative;display:flex;align-items:center;justify-content:center;font-size:76px}
+.ph .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(0,0,0,.6))}
+.ph .nm{position:absolute;left:14px;bottom:11px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+.ph .nm b{font-size:24px;font-weight:800}
+.badge{position:absolute;top:10px;right:10px;font-size:11px;font-weight:800;padding:5px 10px;border-radius:20px}
+.badge.y{background:#12B886;color:#fff;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.badge.n{background:rgba(0,0,0,.5);color:#fff}
+.ribbon{position:absolute;top:16px;left:-34px;transform:rotate(-45deg);background:#F0544F;color:#fff;font-weight:800;font-size:12px;padding:5px 40px;z-index:2;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.ft{padding:14px 18px 16px;display:flex;justify-content:space-between;align-items:flex-end}
+.ft .id{font-family:ui-monospace,Menlo,monospace;font-size:19px;font-weight:800}
+.bar{height:8px;background:linear-gradient(90deg,#FF7A59,#8B5CF6,#5B5BF0)}
+.gloss{position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(160deg,rgba(255,255,255,.22),transparent);pointer-events:none}
+.details{width:min(360px,88vw);background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 14px 34px rgba(0,0,0,.3)}
+.details .t{padding:11px 14px 4px;font-weight:800;font-size:13px;color:#141420}
+.drow{display:flex;justify-content:space-between;gap:12px;padding:9px 14px;border-bottom:1px solid #f0f1f8}
+.drow span.l{color:#6B7192;font-size:13px}
+.drow span.v{font-weight:700;font-size:13px;text-align:right;color:#141420}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px 12px 12px}
+.gthumb{position:relative;cursor:pointer}
+.gthumb img{width:100%;height:76px;object-fit:cover;border-radius:8px;display:block}
+.gthumb span{position:absolute;left:5px;bottom:5px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:6px}
+.links{display:flex;gap:10px}
+.lk{padding:11px 18px;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none;color:#fff;background:rgba(255,255,255,.16);cursor:pointer;border:none}
+.miss,.load{color:#fff;text-align:center;font-size:16px;opacity:.9}
+.spinner{width:26px;height:26px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp 1s linear infinite;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
-.score{font-size:12px;font-weight:800;color:var(--green)}
-.ov{position:fixed;inset:0;z-index:100;background:rgba(8,8,18,.74);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:22px}
-.ov.show{display:flex}
-.idcard-wrap{perspective:1300px;width:min(360px,86vw)}
-.idcard{position:relative;transform:rotateX(7deg) rotateY(-9deg);border-radius:22px;overflow:hidden;box-shadow:0 34px 70px rgba(0,0,0,.55);background:linear-gradient(135deg,#5B5BF0,#8B5CF6 55%,#FF7A59 130%);color:#fff}
-.idcard .hd{padding:16px 18px 0;display:flex;justify-content:space-between;align-items:center}
-.idcard .hd b{font-size:14px;letter-spacing:.5px}
-.idcard .ph{margin:14px 16px 0;border-radius:16px;overflow:hidden;height:196px;background:#00000022 center/cover no-repeat;position:relative;display:flex;align-items:center;justify-content:center;font-size:72px}
-.idcard .ph .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(0,0,0,.6))}
-.idcard .ph .nm{position:absolute;left:14px;bottom:11px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
-.idcard .ph .nm b{font-size:23px;font-weight:800}
-.idcard .ft{padding:14px 18px 16px;display:flex;justify-content:space-between;align-items:flex-end}
-.idcard .ft .id{font-family:ui-monospace,Menlo,monospace;font-size:19px;font-weight:800}
-.idcard .bar{height:8px;background:linear-gradient(90deg,#FF7A59,#8B5CF6,#5B5BF0)}
-.idcard .gloss{position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(160deg,rgba(255,255,255,.22),transparent);pointer-events:none}
-.ovbtns{display:flex;gap:10px;width:min(360px,86vw)}
-footer{color:var(--mut);text-align:center;padding:30px 0 40px;font-size:13px}
-@media(max-width:520px){.hero h1{font-size:24px}}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap topin">
-  <div class="logo">🐾 Pawwltu <small>Know Your Pet</small></div>
-  <a class="btn ghost sm" href="#lost">Lost dogs</a>
-</div></header>
-
-<section class="hero"><div class="wrap">
-  <h1>Find & identify any registered dog</h1>
-  <p>Search by ID or number, or detect a dog from a photo. Registration happens in the app.</p>
-  <div class="searchbar">
-    <input id="q" placeholder="Enter ID / number / name  (e.g. PWL-PD-0012)" autocomplete="off"/>
-    <button class="btn" id="go">Search</button>
-  </div>
-</div></section>
-
-<div class="wrap">
-  <div class="tabs">
-    <div class="tab active" data-t="search">🔍 By ID / number</div>
-    <div class="tab" data-t="photo">📷 By photo</div>
-    <div class="tab" data-t="lost">🚨 Lost dogs</div>
-  </div>
-
-  <div class="sec" id="pane-search">
-    <div id="searchOut" class="grid"></div>
-    <div id="searchHint" class="empty">Type an ID, number, or name above and hit Search.</div>
-  </div>
-
-  <div class="sec" id="pane-photo" style="display:none">
-    <h2>Detect a dog from a photo</h2>
-    <p class="muted">Upload a clear photo of the dog's face. We’ll match it against registered dogs.</p>
-    <label class="drop" id="drop">
-      <input type="file" id="file" accept="image/*" hidden/>
-      <div id="dropTxt">📸 Tap to choose a photo (or drag & drop)</div>
-    </label>
-    <div id="photoOut" class="grid" style="margin-top:16px"></div>
-  </div>
-
-  <div class="sec" id="pane-lost" style="display:none">
-    <h2 id="lost">🚨 Lost dogs</h2>
-    <p class="muted">Reported lost by their owners. If you’ve seen one, contact the owner.</p>
-    <div class="searchbar" style="box-shadow:none;background:transparent;padding:0;margin:0 0 14px">
-      <input id="lq" placeholder="Filter by area / ward" style="background:#fff;border:1px solid #ecedf6"/>
-      <button class="btn ghost" id="near">📍 Near me</button>
-    </div>
-    <div id="lostOut" class="grid"></div>
-    <div id="lostHint" class="empty">Loading…</div>
-  </div>
-</div>
-
-<footer>🐾 Pawwltu · Know Your Pet — Registration & profiles are managed in the app.</footer>
-
-<div class="ov" id="ov"><div class="idcard-wrap"><div class="idcard" id="idcard"></div></div>
-  <div class="ovbtns">
-    <button class="btn" id="ovShare" style="flex:1">📤 Share</button>
-    <button class="btn ghost" id="ovClose" style="background:#fff">Close</button>
-  </div>
-</div>
-
-<script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="site.js"></script>
+<div id="root"><div class="load"><span class="spinner"></span></div></div>
+<script src="../config.js"></script>
+<script>
+(function(){
+  var C=window.KYPWEB||{};
+  function esc(s){return String(s==null?"":s).replace(/[&<>\"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function cap(s){ return s?(String(s).charAt(0).toUpperCase()+String(s).slice(1)):s; }
+  function fmtDate(s){ try{ return new Date(s).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});}catch(e){return "";} }
+  function photoUrl(p){ if(!p) return ""; if(/^https?:/.test(p)) return p; return C.SUPABASE_URL+"/storage/v1/object/public/"+(C.BUCKET||"pet-media")+"/"+p; }
+  function drow(l,v){ if(v==null||v==="") return ""; return '<div class="drow"><span class="l">'+esc(l)+'</span><span class="v">'+esc(v)+'</span></div>'; }
+  function yn(v){ return v==null?null:(v?"Yes":"No"); }
+  function drowHtml(l,v){ return '<div class="drow"><span class="l">'+esc(l)+'</span><span class="v">'+v+'</span></div>'; }
+  function loadExtra(pt){
+    var t=pt.is_street?"street_profiles":"owned_profiles";
+    fetch(C.SUPABASE_URL+"/rest/v1/"+t+"?select=*&pet_id=eq."+encodeURIComponent(pt.id)+"&limit=1",{headers:hdr()}).then(function(r){return r.ok?r.json():[];}).then(function(a){
+      var d=a&&a[0]; if(!d) return; var box=document.getElementById("detExtra"); if(!box) return; var h="";
+      if(pt.is_street){ h+=drow("NGO",d.ngo_name); h+=drow("Caretaker",d.caretaker_phone); h+=drow("Colony",d.colony_area); h+=drow("Sterilized",yn(d.sterilized)); h+=drow("Ear notch",yn(d.ear_notch)); h+=drow("Rabies vaccinated",yn(d.rabies_vaccinated)); h+=drow("Rabies date",d.rabies_date?fmtDate(d.rabies_date):null); h+=drow("Dewormed",yn(d.dewormed)); }
+      else { h+=drow("Sex",d.sex); h+=drow("Date of birth",d.dob?fmtDate(d.dob):null); if(d.breed) h+=drow("Breed",d.breed); }
+      if(h) box.innerHTML='<div class="t">Profile</div>'+h;
+    }).catch(function(e){ console.warn("[card] profile read failed",e); });
+  }
+  function renderMeta(pt){
+    var m=(pt.metadata&&typeof pt.metadata==="object")?pt.metadata:null; if(!m) return;
+    var box=document.getElementById("detMeta"); if(!box) return; var h="";
+    var v=m.vitals||null, vit=""; if(v){ vit+=drow("Microchip",v.microchip); vit+=drow("Weight",v.weight); vit+=drow("Vet",v.vetName||v.clinic); vit+=drow("Vet phone",v.vetPhone); } if(vit) h+='<div class="t">Vitals</div>'+vit;
+    if(m.vax&&m.vax.length){ var vr=""; m.vax.slice(0,10).forEach(function(x){ vr+=drow(x.name||"Vaccine",(x.date?fmtDate(x.date):"")+(x.due?(" \u00b7 due "+fmtDate(x.due)):"")); }); if(vr) h+='<div class="t">Vaccinations</div>'+vr; }
+    if(m.medical&&m.medical.length){ var mr=""; m.medical.slice(0,6).forEach(function(x){ mr+=drow(x.kind||"Note",x.text); }); if(mr) h+='<div class="t">Medical notes</div>'+mr; }
+    if(m.docs&&m.docs.length){ var dr=""; m.docs.slice(0,12).forEach(function(x){ var nm=x.name||"Document"; var url=x.url||(x.path?photoUrl(x.path):null); dr+=drowHtml(nm,url?('<a href="'+esc(url)+'" target="_blank" style="color:#5B5BF0">Open</a>'):'<span style="color:#9aa2bd">on owner device</span>'); }); h+='<div class="t">Documents ('+m.docs.length+')</div>'+dr; }
+    if(h) box.innerHTML=h;
+  }
+  function hdr(){ return {apikey:C.SUPABASE_ANON_KEY,Authorization:"Bearer "+C.SUPABASE_ANON_KEY}; }
+  var usp=new URLSearchParams(location.search);
+  var codeRaw = usp.get("c") || usp.get("code") || decodeURIComponent((location.hash||"").replace(/^#/,"")) || decodeURIComponent(location.pathname.split("/").filter(Boolean).pop()||"");
+  var code=(codeRaw||"").trim();
+  var root=document.getElementById("root");
+  function miss(){ root.innerHTML='<div class="miss">\ud83d\udc3e This ID (<b>'+esc(code||"\u2014")+'</b>) could not be found.<br><br><a class="lk" href="../">Go to Pawwltu</a></div>'; }
+  if(!code){ console.error("[card] no code in URL"); miss(); return; }
+  if(!C.SUPABASE_URL || /YOUR-PROJECT/.test(C.SUPABASE_URL)){ console.error("[card] config.js not loaded or not filled (SUPABASE_URL missing)"); miss(); return; }
+  var FULL="id,name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since,lost_note,created_at,owner_phone,metadata";
+  var MIN="id,name,species,breed,public_code,biometric_id,photo_path,area,is_street,has_noseprint,is_lost,lost_since,owner_phone,metadata";
+  function q(cols){ return C.SUPABASE_URL+"/rest/v1/pets?select="+cols+"&or=(public_code.eq."+encodeURIComponent(code)+",biometric_id.eq."+encodeURIComponent(code)+")&limit=1"; }
+  function run(cols, isRetry){
+    fetch(q(cols),{headers:hdr()})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,status:r.status,body:j}; }); })
+      .then(function(res){
+        if(!res.ok){
+          console.error("[card] lookup HTTP "+res.status, res.body);
+          if(!isRetry){ console.warn("[card] retrying with minimal columns"); run(MIN, true); return; }
+          miss(); return;
+        }
+        var rows=res.body;
+        var pt=Array.isArray(rows)&&rows[0]?rows[0]:null;
+        if(!pt){ console.warn("[card] no row for code", code); miss(); return; }
+        render(pt);
+      })
+      .catch(function(e){ console.error("[card] fetch failed", e); if(!isRetry){ run(MIN, true); } else { miss(); } });
+  }
+  function loadPhotos(pt){
+    if(!pt.id) return;
+    var seen={}, list=[];
+    function add(path,angle){ if(path && !seen[path]){ seen[path]=1; list.push({path:path,angle:angle||""}); } }
+    add(pt.photo_path,"");
+    var e1=fetch(C.SUPABASE_URL+"/rest/v1/pet_embeddings?select=photo_path,angle&pet_id=eq."+encodeURIComponent(pt.id),{headers:hdr()}).then(function(r){return r.ok?r.json():[];}).then(function(rows){ if(Array.isArray(rows)) rows.forEach(function(x){ add(x.photo_path,x.angle); }); }).catch(function(e){ console.warn("[card] embeddings read failed",e); });
+    var e2=fetch(C.SUPABASE_URL+"/storage/v1/object/list/"+(C.BUCKET||"pet-media"),{method:"POST",headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:"Bearer "+C.SUPABASE_ANON_KEY,"Content-Type":"application/json"},body:JSON.stringify({prefix:"pets/"+pt.id+"/photos/",limit:100,offset:0})}).then(function(r){return r.ok?r.json():[];}).then(function(objs){ if(Array.isArray(objs)) objs.forEach(function(o){ if(o&&o.name&&o.name.indexOf(".emptyFolderPlaceholder")<0){ add("pets/"+pt.id+"/photos/"+o.name,""); } }); }).catch(function(e){ console.warn("[card] storage list failed",e); });
+    Promise.all([e1,e2]).then(function(){
+      console.log("[card] total photos =",list.length);
+      if(list.length<2) return;
+      var g=document.getElementById("gal"); if(!g) return;
+      g.innerHTML='<div class="t">All photos ('+list.length+')</div><div class="gal">'
+        + list.map(function(p){ var u=photoUrl(p.path); return '<div class="gthumb" data-u="'+esc(u)+'"><img src="'+esc(u)+'" alt="" loading="lazy"/>'+(p.angle?'<span>'+esc(p.angle)+'</span>':'')+'</div>'; }).join("")
+        + '</div>';
+      g.querySelectorAll(".gthumb").forEach(function(el){ el.onclick=function(){ var ph=document.querySelector(".card .ph"); if(ph){ ph.style.backgroundImage="url('"+el.dataset.u+"')"; ph.style.fontSize="0"; } }; });
+    });
+  }
+  function render(pt){
+    var _m=(pt.metadata&&typeof pt.metadata==="object")?pt.metadata:null; if(_m){ if(!pt.is_lost&&(_m.isLost===true||_m.is_lost===true))pt.is_lost=true; if(pt.lost_since==null&&(_m.lostSince||_m.lost_since))pt.lost_since=_m.lostSince||_m.lost_since; if(pt.lost_note==null&&(_m.lostNote||_m.lost_note))pt.lost_note=_m.lostNote||_m.lost_note; } var digital=pt.public_code||pt.biometric_id||code;
+    var emoji=pt.species==="cat"?"\ud83d\udc31":"\ud83d\udc36";
+    var ph=photoUrl(pt.photo_path);
+    document.title=(pt.name||"Dog")+" \u00b7 KYP ID "+digital;
+    var nose=pt.has_noseprint?'<div class="badge y">\ud83d\udd12 NOSEPRINT VERIFIED</div>':'<div class="badge n">\ud83d\udcf7 PHOTO ONLY</div>';
+    var ribbon=pt.is_lost?'<div class="ribbon">LOST</div>':"";
+    var det="";
+    det+=drow("Status", pt.has_noseprint?"Noseprint verified":"Photo only");
+    det+=drow("Type", pt.is_street?"Street dog":"Home pet");
+    det+=drow("Species", cap(pt.species));
+    det+=drow("Breed", pt.breed);
+    det+=drow("Area", pt.area);
+    det+=drow("Registered", pt.created_at?fmtDate(pt.created_at):null);
+    if(pt.owner_phone && !pt.is_lost){ det+='<div style="padding:9px 14px"><a style="text-decoration:none;font-size:13px;padding:7px 13px;border-radius:999px;background:#12B886;color:#fff;font-weight:700" href="tel:'+esc(pt.owner_phone)+'">Call owner</a></div>'; }
+    if(pt.is_lost){ det+=drow("Reported lost", pt.lost_since?fmtDate(pt.lost_since):"Recently"); det+=drow("Note", pt.lost_note); }
+    root.innerHTML=
+      '<div class="wrap"><div class="card">'+ribbon
+      +'<div class="hd"><b>\ud83d\udc3e KYP \u00b7 PET ID</b><span style="font-size:11px;opacity:.9">by Pawwltu</span></div>'
+      +'<div class="ph" '+(ph?('style="background-image:url(\''+esc(ph)+'\')"'):'')+'>'+(ph?"":emoji)+'<div class="grad"></div>'+nose
+      +'<div class="nm"><b>'+esc(pt.name||"Unnamed")+'</b><div style="font-size:12px;opacity:.95">'+esc(pt.breed||(pt.is_street?"Street dog":"\u2014"))+(pt.area?" \u00b7 "+esc(pt.area):"")+'</div></div></div>'
+      +'<div class="ft"><div><div style="font-size:10px;letter-spacing:1.4px;opacity:.82">DIGITAL ID</div><div class="id">'+esc(digital)+'</div></div>'
+      +'<div style="text-align:right;font-size:11px;opacity:.92;line-height:1.5">'+(pt.is_street?"Street dog":"Home pet")+'<br>'+(pt.has_noseprint?"\ud83d\udd12 100% verifiable":"\ud83d\udcf7 photo match")+'</div></div>'
+      +'<div class="bar"></div><div class="gloss"></div></div></div>'
+      +'<div class="details"><div class="t">Details</div>'+det+'</div>'
+      +'<div class="details" id="detExtra"></div>'
+      +'<div class="details" id="detMeta"></div>'
+      +'<div class="details" id="gal"></div>'
+      +'<div class="links"><a class="lk" href="../?q='+encodeURIComponent(digital)+'">\ud83d\udd0d View on Pawwltu</a>'
+      +'<button class="lk" id="sh">\ud83d\udce4 Share</button></div>';
+    var sh=document.getElementById("sh");
+    if(sh) sh.onclick=function(){ var link=location.href; var text=(pt.name||"This dog")+" \u00b7 KYP ID "+digital+(pt.is_lost?" \u2014 REPORTED LOST":"")+"\n"+link; if(navigator.share){navigator.share({title:"KYP Pet ID",text:text,url:link});}else if(navigator.clipboard){navigator.clipboard.writeText(text);sh.textContent="\u2705 Copied";} };
+    loadPhotos(pt);
+    loadExtra(pt);
+    renderMeta(pt);
+  }
+  run(FULL, false);
+})();
+</script>
 </body>
 </html>
+​
