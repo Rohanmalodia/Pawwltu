@@ -60,7 +60,7 @@ body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:ce
     var t=pt.is_street?"street_profiles":"owned_profiles";
     fetch(C.SUPABASE_URL+"/rest/v1/"+t+"?select=*&pet_id=eq."+encodeURIComponent(pt.id)+"&limit=1",{headers:hdr()}).then(function(r){return r.ok?r.json():[];}).then(function(a){
       var d=a&&a[0]; if(!d) return; var box=document.getElementById("detExtra"); if(!box) return; var h="";
-      if(pt.is_street){ h+=drow("NGO",d.ngo_name); h+=drow("Caretaker",d.caretaker_phone); h+=drow("Colony",d.colony_area); h+=drow("Sterilized",yn(d.sterilized)); h+=drow("Ear notch",yn(d.ear_notch)); h+=drow("Rabies vaccinated",yn(d.rabies_vaccinated)); h+=drow("Rabies date",d.rabies_date?fmtDate(d.rabies_date):null); h+=drow("Dewormed",yn(d.dewormed)); }
+      if(pt.is_street){ h+=drow("NGO",d.ngo_name); h+=drow("Caretaker",d.caretaker_phone); h+=drow("Colony",d.colony_area); h+=drow("Sterilized",yn(d.sterilized)||"Not recorded"); h+=drow("Ear notch",yn(d.ear_notch)); h+=drow("Rabies vaccinated",yn(d.rabies_vaccinated)||"Not recorded"); h+=drow("Rabies date",d.rabies_date?fmtDate(d.rabies_date):null); h+=drow("Dewormed",yn(d.dewormed)||"Not recorded"); }
       else { h+=drow("Sex",d.sex); h+=drow("Date of birth",d.dob?fmtDate(d.dob):null); if(d.breed) h+=drow("Breed",d.breed); }
       if(h) box.innerHTML='<div class="t">Profile</div>'+h;
     }).catch(function(e){ console.warn("[card] profile read failed",e); });
@@ -159,4 +159,3 @@ body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:ce
 </script>
 </body>
 </html>
-​
