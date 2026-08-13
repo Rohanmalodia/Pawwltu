@@ -2,11 +2,13 @@
 (function () {
   var C = window.KYPWEB || {};
   var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
-  var SAFE = "id,name,species,breed,public_code,biometric_id,photo_path,area,lat,lng,is_street,has_noseprint,is_lost,lost_since,owner_phone";
+  var SAFE = "id,name,species,breed,public_code,biometric_id,photo_path,area,lat,lng,is_street,has_noseprint,is_lost,lost_since,lost_note,owner_phone,owner_name,created_at";
   var EMOJI = { dog: "\ud83d\udc36", cat: "\ud83d\udc31" };
   function esc(s){return String(s==null?"":s).replace(/[&<>\"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
   function photoUrl(p){ if(!p) return ""; if(/^https?:/.test(p)) return p; return C.SUPABASE_URL + "/storage/v1/object/public/" + (C.BUCKET||"pet-media") + "/" + p; }
   function code(pt){ return pt.public_code || pt.biometric_id || "Pending"; }
+  function cap(s){ return s?(String(s).charAt(0).toUpperCase()+String(s).slice(1)):s; }
+  function fmtDate(s){ try{ return new Date(s).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});}catch(e){return "";} }
 
   var panes = { search:"pane-search", photo:"pane-photo", lost:"pane-lost" };
   document.querySelectorAll(".tab").forEach(function(t){
@@ -90,31 +92,53 @@
       });
   }
   function normalizeMatches(data){
-    var arr = data && (data.matches || data.results || data.candidates || (Array.isArray(data)?data:null)) || [];
+    window.__lastIdentify = data;
+    console.log("[identify] raw response:", data);
+    var arr = data && (data.matches || data.results || data.candidates || data.pets || (Array.isArray(data)?data:null)) || [];
     return arr.map(function(m){
-      var key = m.biometric_id || m.public_code || m.pet_id || m.id || m.petId || null;
-      var byPath = (!key && m.photo_path) ? m.photo_path : null;
-      var sc = m.score!=null?m.score : (m.similarity!=null?m.similarity : (m.confidence!=null?m.confidence : (m.distance!=null?(1-m.distance):null)));
-      return { key:key, photo_path:byPath, score:sc };
+      if(typeof m === "string") return { key:m, photo_path:null, score:null };
+      var key = m.biometric_id || m.public_code || m.pet_id || m.petId || m.id || null;
+      var path = m.photo_path || m.path || m.file || null;
+      var sc = m.score!=null?m.score : (m.similarity!=null?m.similarity : (m.confidence!=null?m.confidence : (m.distance!=null?(1-m.distance) : (m.dist!=null?(1-m.dist):null))));
+      return { key:key!=null?String(key):null, photo_path:path!=null?String(path):null, score:sc };
     }).filter(function(m){ return m.key || m.photo_path; }).slice(0,12);
   }
+
+  var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  function inList(col, vals){
+    if(!vals.length) return null;
+    var q = vals.map(function(v){ return '"'+String(v)+'"'; }).join(",");
+    return col+".in.("+q+")";
+  }
   function resolveMatches(matches){
-    var ids=matches.map(function(m){return m.key;}).filter(Boolean);
-    var paths=matches.map(function(m){return m.photo_path;}).filter(Boolean);
-    var q = sb.from("pets").select(SAFE);
-    if(ids.length && !paths.length){
-      q = q.or("public_code.in.("+ids.join(",")+"),biometric_id.in.("+ids.join(",")+")");
-    }
-    q.limit(20).then(function(r){
+    var uuids=[], codes=[], paths=[];
+    matches.forEach(function(m){
+      if(m.key){ if(UUID_RE.test(m.key)) uuids.push(m.key); else codes.push(m.key); }
+      if(m.photo_path) paths.push(m.photo_path);
+    });
+    var parts=[];
+    var pc=inList("public_code",codes); if(pc) parts.push(pc);
+    var bi=inList("biometric_id",codes); if(bi) parts.push(bi);
+    var idp=inList("id",uuids); if(idp) parts.push(idp);
+    var pp=inList("photo_path",paths); if(pp) parts.push(pp);
+    var query = sb.from("pets").select(SAFE);
+    if(parts.length){ query = query.or(parts.join(",")); }
+    query.limit(20).then(function(r){
+      if(r.error){ console.error("[identify] resolve error:", r.error); }
       var rows=r.data||[];
       rows.forEach(function(p){
-        var m=matches.filter(function(x){return x.key===p.public_code||x.key===p.biometric_id||x.photo_path===p.photo_path;})[0];
+        var m=matches.filter(function(x){ return x.key===p.public_code||x.key===p.biometric_id||x.key===String(p.id)||x.photo_path===p.photo_path; })[0];
         p.__score = m?m.score:null;
       });
       rows.sort(function(a,b){return (b.__score||0)-(a.__score||0);});
-      if(!rows.length){ pout.innerHTML='<div class="empty">Matched, but couldn\u2019t load the profile.</div>'; return; }
+      if(!rows.length){
+        var seen = codes.concat(uuids).slice(0,3).join(", ");
+        pout.innerHTML='<div class="empty">We found a visual match'+(seen?' (<b>'+esc(seen)+'</b>)':'')+', but that dog isn\u2019t in the public database yet.</div>';
+        return;
+      }
       pout.innerHTML=rows.map(function(p){
-        var sc=p.__score!=null?'<span class="score">'+Math.round(p.__score*100)+'% match</span>':"";
+        var pct = p.__score!=null ? (p.__score>1?Math.round(p.__score):Math.round(p.__score*100)) : null;
+        var sc = pct!=null ? '<span class="score">'+pct+'% match</span>' : "";
         return petCard(p, sc);
       }).join("");
       wire(pout, rows);
@@ -159,7 +183,54 @@
   }
   function loadLostQuiet(){ sb.from("pets").select(SAFE).eq("is_lost",true).order("lost_since",{ascending:false}).limit(200).then(function(r){ LOST=r.data||[]; renderLost(); }); }
 
-  var ov=document.getElementById("ov"), idcard=document.getElementById("idcard"), curPt=null;
+  var ov=document.getElementById("ov"), idcard=document.getElementById("idcard"), curPt=null, detailsBox=null;
+  function ensureDetailsBox(){
+    if(detailsBox) return detailsBox;
+    detailsBox=document.createElement("div");
+    detailsBox.id="petDetails";
+    detailsBox.style.cssText="width:min(360px,86vw);background:#fff;border-radius:16px;max-height:40vh;overflow:auto;box-shadow:0 14px 34px rgba(0,0,0,.28)";
+    var btns=ov.querySelector(".ovbtns");
+    ov.insertBefore(detailsBox, btns);
+    return detailsBox;
+  }
+  function drow(label,val){ if(val==null||val==="") return ""; return '<div style="display:flex;justify-content:space-between;gap:12px;padding:9px 14px;border-bottom:1px solid #f0f1f8"><span style="color:#6B7192;font-size:13px">'+esc(label)+'</span><span style="font-weight:700;font-size:13px;text-align:right">'+esc(val)+'</span></div>'; }
+  function yn(v){ return v==null?null:(v?"Yes":"No"); }
+  function renderDetails(pt){
+    var box=ensureDetailsBox();
+    var h="";
+    h+=drow("Status", pt.has_noseprint?"Noseprint verified":"Photo only");
+    h+=drow("Type", pt.is_street?"Street dog":"Home pet");
+    h+=drow("Species", cap(pt.species));
+    h+=drow("Breed", pt.breed);
+    h+=drow("Area", pt.area);
+    h+=drow("Registered", pt.created_at?fmtDate(pt.created_at):null);
+    if(pt.is_lost){
+      h+=drow("Reported lost", pt.lost_since?fmtDate(pt.lost_since):"Recently");
+      h+=drow("Note", pt.lost_note);
+      if(pt.owner_phone) h+='<div style="padding:11px 14px"><a class="pill red" style="text-decoration:none;font-size:13px;padding:8px 14px" href="tel:'+esc(pt.owner_phone)+'">\ud83d\udcde Call owner</a></div>';
+    }
+    box.innerHTML='<div style="padding:11px 14px 4px;font-weight:800;font-size:13px">Details</div>'+h+'<div id="detailsExtra"></div>';
+    loadExtra(pt);
+  }
+  function loadExtra(pt){
+    var table = pt.is_street ? "street_profiles" : "owned_profiles";
+    sb.from(table).select("*").eq("pet_id", pt.id).limit(1).then(function(r){
+      if(r.error || !r.data || !r.data[0]) return;
+      var d=r.data[0], box=document.getElementById("detailsExtra"); if(!box) return;
+      var h="";
+      if(pt.is_street){
+        h+=drow("NGO", d.ngo_name);
+        h+=drow("Caretaker", d.caretaker_phone);
+        h+=drow("Colony", d.colony_area);
+        h+=drow("Sterilized", yn(d.sterilized));
+        h+=drow("Ear notch", yn(d.ear_notch));
+        h+=drow("Rabies vaccinated", yn(d.rabies_vaccinated));
+        h+=drow("Rabies date", d.rabies_date?fmtDate(d.rabies_date):null);
+        h+=drow("Dewormed", yn(d.dewormed));
+      }
+      if(h) box.innerHTML=h;
+    });
+  }
   function openCard(pt){
     curPt=pt;
     var ph=photoUrl(pt.photo_path);
@@ -175,10 +246,11 @@
       + '<div class="ft"><div><div style="font-size:10px;letter-spacing:1.4px;opacity:.82">DIGITAL ID</div><div class="id">'+esc(code(pt))+'</div></div>'
       + '<div style="text-align:right;font-size:11px;opacity:.92;line-height:1.5">'+(pt.is_street?"Street dog":"Home pet")+'<br>'+(pt.has_noseprint?"\ud83d\udd12 100% verifiable":"\ud83d\udcf7 photo match")+'</div></div>'
       + '<div class="bar"></div><div class="gloss"></div>';
+    renderDetails(pt);
     ov.classList.add("show");
     if(history.pushState){ history.pushState({card:1},""); }
   }
-  function closeCard(){ ov.classList.remove("show"); curPt=null; }
+  function closeCard(){ ov.classList.remove("show"); curPt=null; if(detailsBox) detailsBox.innerHTML=""; }
   document.getElementById("ovClose").onclick=function(){ if(history.state&&history.state.card) history.back(); else closeCard(); };
   ov.addEventListener("click",function(e){ if(e.target===ov){ if(history.state&&history.state.card) history.back(); else closeCard(); } });
   window.addEventListener("popstate",function(){ if(ov.classList.contains("show")) closeCard(); });
