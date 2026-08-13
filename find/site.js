@@ -1,4 +1,3 @@
-/* Pawwltu website logic */
 (function () {
   var C = window.KYPWEB || {};
   var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
@@ -24,7 +23,7 @@
     }
     return p;
   }
-
+​
   var panes = { search:"pane-search", photo:"pane-photo", lost:"pane-lost" };
   document.querySelectorAll(".tab").forEach(function(t){
     t.onclick=function(){
@@ -34,7 +33,7 @@
       if(t.dataset.t==="lost") loadLost();
     };
   });
-
+​
   function petCard(pt, extra){
     var ph = photoUrl(pt.photo_path);
     var phStyle = ph ? ('style="background-image:url(\''+esc(ph)+'\')"') : "";
@@ -55,7 +54,7 @@
       el.onclick=function(){ var pt=pets.filter(function(p){return String(p.id)===el.dataset.id;})[0]; if(pt) openCard(pt); };
     });
   }
-
+​
   var qEl=document.getElementById("q"), out=document.getElementById("searchOut"), hint=document.getElementById("searchHint");
   function doSearch(){
     var q=(qEl.value||"").trim();
@@ -77,14 +76,14 @@
   qEl.addEventListener("keydown",function(e){ if(e.key==="Enter") doSearch(); });
   var usp=new URLSearchParams(location.search);
   if(usp.get("q")){ qEl.value=usp.get("q"); doSearch(); }
-
+​
   var drop=document.getElementById("drop"), file=document.getElementById("file"), pout=document.getElementById("photoOut"), dropTxt=document.getElementById("dropTxt");
   drop.addEventListener("click",function(){ file.click(); });
   drop.addEventListener("dragover",function(e){ e.preventDefault(); drop.classList.add("drag"); });
   drop.addEventListener("dragleave",function(){ drop.classList.remove("drag"); });
   drop.addEventListener("drop",function(e){ e.preventDefault(); drop.classList.remove("drag"); if(e.dataTransfer.files[0]) identify(e.dataTransfer.files[0]); });
   file.addEventListener("change",function(){ if(file.files[0]) identify(file.files[0]); });
-
+​
   function identify(f){
     dropTxt.innerHTML='<span class="spinner"></span> Identifying\u2026';
     pout.innerHTML="";
@@ -118,7 +117,7 @@
       return { key:key!=null?String(key):null, photo_path:path!=null?String(path):null, score:sc };
     }).filter(function(m){ return m.key || m.photo_path; }).slice(0,12);
   }
-
+​
   var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   function inList(col, vals){
     if(!vals.length) return null;
@@ -159,7 +158,7 @@
         wire(pout, rows);
       });
   }
-
+​
   var lostOut=document.getElementById("lostOut"), lostHint=document.getElementById("lostHint"), lq=document.getElementById("lq");
   var LOST=[]; var myLoc=null;
   var LOST_FILTER="is_lost.eq.true,metadata->>isLost.eq.true";
@@ -204,7 +203,7 @@
     }catch(e){}
   }
   function loadLostQuiet(){ lostAttempt(SAFE).then(function(r){ if(r.error){ return lostAttempt(SAFE_MIN); } return r; }).then(function(r){ LOST=(r.data||[]).map(normLost).filter(function(p){return p.is_lost;}); LOST.sort(function(a,b){ return new Date(b.lost_since||0)-new Date(a.lost_since||0); }); renderLost(); }); }
-
+​
   var ov=document.getElementById("ov"), idcard=document.getElementById("idcard"), curPt=null, detailsBox=null;
   function ensureDetailsBox(){
     if(detailsBox) return detailsBox;
@@ -217,6 +216,20 @@
   }
   function drow(label,val){ if(val==null||val==="") return ""; return '<div style="display:flex;justify-content:space-between;gap:12px;padding:9px 14px;border-bottom:1px solid #f0f1f8"><span style="color:#6B7192;font-size:13px">'+esc(label)+'</span><span style="font-weight:700;font-size:13px;text-align:right">'+esc(val)+'</span></div>'; }
   function yn(v){ return v==null?null:(v?"Yes":"No"); }
+  function drowHtml(label,valHtml){ return '<div style="display:flex;justify-content:space-between;gap:12px;padding:9px 14px;border-bottom:1px solid #f0f1f8"><span style="color:#6B7192;font-size:13px">'+esc(label)+'</span><span style="font-weight:700;font-size:13px;text-align:right">'+valHtml+'</span></div>'; }
+  function sec(t){ return '<div style="padding:11px 14px 4px;font-weight:800;font-size:13px;border-top:6px solid #f4f5fb;margin-top:2px">'+esc(t)+'</div>'; }
+  function renderMeta(pt){
+    var box=document.getElementById("detailsMeta"); if(!box) return;
+    var m=(pt.metadata&&typeof pt.metadata==="object")?pt.metadata:null; if(!m){ box.innerHTML=""; return; }
+    var h="";
+    var v=m.vitals||null, vit="";
+    if(v){ vit+=drow("Microchip", v.microchip); vit+=drow("Weight", v.weight); vit+=drow("Vet", v.vetName||v.clinic); vit+=drow("Vet phone", v.vetPhone); }
+    if(vit) h+=sec("Vitals")+vit;
+    if(m.vax&&m.vax.length){ var vr=""; m.vax.slice(0,10).forEach(function(x){ vr+=drow(x.name||"Vaccine",(x.date?fmtDate(x.date):"")+(x.due?(" \u00b7 due "+fmtDate(x.due)):"")); }); if(vr) h+=sec("Vaccinations")+vr; }
+    if(m.medical&&m.medical.length){ var mr=""; m.medical.slice(0,6).forEach(function(x){ mr+=drow(x.kind||"Note", x.text); }); if(mr) h+=sec("Medical notes")+mr; }
+    if(m.docs&&m.docs.length){ var dr=""; m.docs.slice(0,12).forEach(function(x){ var nm=x.name||"Document"; var url=x.url||(x.path?photoUrl(x.path):null); dr+=drowHtml(nm, url?('<a href="'+esc(url)+'" target="_blank" style="color:#5B5BF0">Open</a>'):'<span style="color:#9aa2bd">on owner device</span>'); }); h+=sec("Documents ("+m.docs.length+")")+dr; }
+    box.innerHTML=h;
+  }
   function renderDetails(pt){
     var box=ensureDetailsBox();
     var h="";
@@ -226,14 +239,16 @@
     h+=drow("Breed", pt.breed);
     h+=drow("Area", pt.area);
     h+=drow("Registered", pt.created_at?fmtDate(pt.created_at):null);
+    if(pt.owner_phone && !pt.is_lost){ h+='<div style="padding:9px 14px"><a style="text-decoration:none;font-size:13px;padding:7px 13px;border-radius:999px;background:#12B886;color:#fff;font-weight:700" href="tel:'+esc(pt.owner_phone)+'">Call owner</a></div>'; }
     if(pt.is_lost){
       h+=drow("Reported lost", pt.lost_since?fmtDate(pt.lost_since):"Recently");
       h+=drow("Note", pt.lost_note);
       if(pt.owner_phone) h+='<div style="padding:11px 14px"><a class="pill red" style="text-decoration:none;font-size:13px;padding:8px 14px" href="tel:'+esc(pt.owner_phone)+'">\ud83d\udcde Call owner</a></div>';
     }
-    box.innerHTML='<div style="padding:11px 14px 4px;font-weight:800;font-size:13px">Details</div>'+h+'<div id="petPhotos"></div><div id="detailsExtra"></div>';
+    box.innerHTML='<div style="padding:11px 14px 4px;font-weight:800;font-size:13px">Details</div>'+h+'<div id="petPhotos"></div><div id="detailsExtra"></div><div id="detailsMeta"></div>';
     loadPhotos(pt);
     loadExtra(pt);
+    renderMeta(pt);
   }
   function loadPhotos(pt){
     var box=document.getElementById("petPhotos"); if(!box) return;
@@ -267,6 +282,10 @@
         h+=drow("Rabies vaccinated", yn(d.rabies_vaccinated));
         h+=drow("Rabies date", d.rabies_date?fmtDate(d.rabies_date):null);
         h+=drow("Dewormed", yn(d.dewormed));
+      } else {
+        h+=drow("Sex", d.sex);
+        h+=drow("Date of birth", d.dob?fmtDate(d.dob):null);
+        if(d.breed) h+=drow("Breed", d.breed);
       }
       if(h) box.innerHTML='<div style="border-top:6px solid #f4f5fb"></div>'+h;
     });
