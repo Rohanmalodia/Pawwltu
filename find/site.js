@@ -115,7 +115,7 @@
       if(typeof m === "string") return { key:m, photo_path:null, score:null };
       var key = m.biometric_id || m.public_code || m.pet_id || m.petId || m.id || null;
       var path = m.photo_path || m.path || m.file || null;
-      var sc = m.score!=null?m.score : (m.similarity!=null?m.similarity : (m.confidence!=null?m.confidence : (m.distance!=null?(1-m.distance) : (m.dist!=null?(1-m.dist):null))));
+      var sc = m.confidence!=null?m.confidence : (m.score!=null?m.score : (m.similarity!=null?m.similarity : (m.distance!=null?(1-m.distance) : (m.dist!=null?(1-m.dist):null))));
       return { key:key!=null?String(key):null, photo_path:path!=null?String(path):null, score:sc };
     }).filter(function(m){ return m.key || m.photo_path; }).slice(0,12);
   }
